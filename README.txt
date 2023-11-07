@@ -1,6 +1,19 @@
 Tiago Installation:
 https://wiki.ros.org/Robots/TIAGo/Tutorials/Installation/InstallUbuntuAndROS
 rosinstall ./src /opt/ros/noetic tiago_public−noetic.rosinstall
+Ex:
+Tiago was used for all.
+
+6.1 Simulation scenario:
+roslaunch ics_gazebo tiago.launch world_suffix:=tutorial2
+
+6.2 Rviz configuration file
+roslaunch ics_gazebo tiago.launch world_suffix:=tutorial
+
+6.3 Controller plugin
+rosrun look_to_point look_to_point
+TODO based on look_to_point rosrun:
+roslaunch controllers_tutorials combined_resource_controller_tiago.launch
 
 Installation of the tmc ROS Noetic packages.
 

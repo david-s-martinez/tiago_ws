@@ -26,7 +26,15 @@
                     </mesh>
                 </geometry>
             </visual>
-
+            <collision name="collision_door_frame">
+                <pose>0 0 0 0 0 0</pose>
+                <geometry>
+                    <mesh>
+                        <uri>model://door/meshes/frame.stl</uri>
+                        <scale>0.1 0.1 0.1</scale> <!-- Use the same scale as the visual -->
+                    </mesh>
+                </geometry>
+            </collision>
 
             <!-- TODO: Create a "collision" entry with the same geometry than the "visual" entry.-->        
 

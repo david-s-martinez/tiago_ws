@@ -43,7 +43,7 @@ public:
                    ClaimedResources&       claimed_resources)
   {
     // Check if construction finished cleanly
-    if (state_ != ControllerState::CONSTRUCTED)
+    if (state_ != CONSTRUCTED)
     {
       ROS_ERROR("Cannot initialize this controller because it failed to be constructed");
       return false;
@@ -75,7 +75,7 @@ public:
     pos_iface->clearClaims();
 
     // success
-    state_ = ControllerState::INITIALIZED;
+    state_ = INITIALIZED;
     return true;
   }
 
