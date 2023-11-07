@@ -397,28 +397,50 @@
       <pose>1.47175 -1.33821 0 0 -0 0</pose>
     </model>
     <state world_name='default'>
-      <sim_time>85 650000000</sim_time>
-      <real_time>86 90007653</real_time>
-      <wall_time>1699372951 180711394</wall_time>
-      <iterations>85650</iterations>
+      <sim_time>143 524000000</sim_time>
+      <real_time>58 116931073</real_time>
+      <wall_time>1699375815 481831885</wall_time>
+      <iterations>57874</iterations>
       <model name='beer'>
-        <pose>1.15176 -1.36161 1.01499 1e-06 -2.7e-05 0.000314</pose>
+        <pose>1.15176 -1.36161 1.01499 1e-06 -2.7e-05 0.00034</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>1.15176 -1.36161 1.12999 1e-06 -2.7e-05 0.000314</pose>
+          <pose>1.15176 -1.36161 1.12999 1e-06 -2.7e-05 0.00034</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 -9.8 0 -0 0</acceleration>
+          <acceleration>0 0 -9.8 -1e-06 -0 0</acceleration>
           <wrench>0 0 -3.822 0 -0 0</wrench>
         </link>
       </model>
       <model name='coke_can'>
-        <pose>1.47904 -1.27495 1.01242 -0.010337 0.000769 0.003504</pose>
+        <pose>1.47903 -1.27494 1.01242 -0.007784 0.002769 0.00298</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>1.47904 -1.27495 1.01242 -0.010337 0.000769 0.003504</pose>
+          <pose>1.47903 -1.27494 1.01242 -0.007784 0.002769 0.00298</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000623 -0.000247 -1.6e-05 0.004276 0.01086 -0.000269</acceleration>
-          <wrench>0.000243 -9.6e-05 -6e-06 0 -0 0</wrench>
+          <acceleration>-0.022812 -0.06634 0.00612 1.15139 -0.394658 -0.114704</acceleration>
+          <wrench>-0.008897 -0.025872 0.002387 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='door'>
+        <pose>0.822471 -2.85081 1e-06 1.5708 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='door_body'>
+          <pose>0.822477 -2.8508 1e-06 1.5708 1e-06 -9.8e-05</pose>
+          <velocity>1e-06 2.7e-05 -0 7e-06 0 -8.3e-05</velocity>
+          <acceleration>-0.006407 -0.043994 -0.000362 0.013172 -0.000957 -0.161329</acceleration>
+          <wrench>-0.006407 -0.043994 -0.000362 0 -0 0</wrench>
+        </link>
+        <link name='door_frame'>
+          <pose>0.822471 -2.85081 1e-06 1.5708 -0 0</pose>
+          <velocity>1e-06 1.6e-05 0 4e-06 -0 -8e-05</velocity>
+          <acceleration>-0.00708 -0.058843 0.000475 0.007683 -0.000482 -0.15909</acceleration>
+          <wrench>-0.212407 -1.76528 0.014242 0 -0 0</wrench>
+        </link>
+        <link name='door_handle'>
+          <pose>0.822472 -2.85081 -10800.9 1.5708 -0 0</pose>
+          <velocity>0 0 -460.1 0 -0 0</velocity>
+          <acceleration>0 0 -9.8 0 -0 0</acceleration>
+          <wrench>0 0 -9.8 0 -0 0</wrench>
         </link>
       </model>
       <model name='ground_plane'>
@@ -447,10 +469,154 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>5 -5 2 0 0.275643 2.35619</pose>
+        <pose>4.92079 -4.13434 2.57956 -0 0.415644 2.70419</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
+    <model name='door'>
+      <pose>0.822472 -2.85081 0 1.5708 -0 0</pose>
+      <link name='door_frame'>
+        <inertial>
+          <pose>0.525 1 0.05 0 -0 0</pose>
+          <mass>30</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <visual name='visual_frame'>
+          <pose>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://door/meshes/frame.stl</uri>
+              <scale>0.1 0.1 0.1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='door_body'>
+        <inertial>
+          <pose>0.525 1 0.05 0 -0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>0.083</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.083</iyy>
+            <iyz>0</iyz>
+            <izz>0.083</izz>
+          </inertia>
+        </inertial>
+        <collision name='collision_door'>
+          <pose>0.525 0.995 0.05 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.9 1.99 0.03</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_door'>
+          <pose>0.525 0.995 0.05 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.9 1.99 0.03</size>
+            </box>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='door_handle'>
+        <inertial>
+          <pose>0.8 1 0.15 -3.14159 -0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <visual name='visual_handle'>
+          <pose>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://door/meshes/handle.stl</uri>
+              <scale>0.01 0.01 0.01</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='door_hinge' type='revolute'>
+        <parent>door_frame</parent>
+        <child>door_body</child>
+        <pose>0.075 0 0.065 0 -0 0</pose>
+        <axis>
+          <xyz expressed_in='__model__'>0 1 0</xyz>
+          <dynamics>
+            <damping>0.1</damping>
+            <friction>0.1</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+        </axis>
+      </joint>
+      <joint name='world_joint' type='revolute'>
+        <child>door_frame</child>
+        <parent>world</parent>
+        <axis>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+          </limit>
+          <xyz expressed_in='__model__'>0 1 0</xyz>
+          <dynamics>
+            <damping>1</damping>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+    </model>
   </world>
 </sdf>

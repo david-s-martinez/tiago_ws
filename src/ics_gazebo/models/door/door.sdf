@@ -22,7 +22,7 @@
                     <mesh>
                         <uri>model://door/meshes/frame.stl</uri>
                         <!-- TODO:   Find a proper scale for the mesh -->
-	                    <scale> 1.0 1.0 1.0 </scale>
+	                    <scale> 0.1 0.1 0.1 </scale>
                     </mesh>
                 </geometry>
             </visual>
@@ -88,7 +88,7 @@
                         <uri>model://door/meshes/handle.stl</uri>
 
                         <!-- TODO:   Find a proper scale for the mesh -->
-	                    <scale> 1.0 1.0 1.0 </scale>
+	                    <scale> 0.001 0.001 0.001 </scale>
                     </mesh>
                 </geometry>
             </visual>
