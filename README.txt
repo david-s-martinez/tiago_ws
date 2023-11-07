@@ -1,6 +1,7 @@
-Tiago install
-create pkg tiago under src
-rosinstall ./src/tiago /opt/ros/noetic tiago_public−noetic.rosinstall
+Tiago Installation:
+https://wiki.ros.org/Robots/TIAGo/Tutorials/Installation/InstallUbuntuAndROS
+rosinstall ./src /opt/ros/noetic tiago_public−noetic.rosinstall
+
 Installation of the tmc ROS Noetic packages.
 
 These are not free packages. Please install them in your remote workstation and do not distribute the instruction set. Open one terminal and run the following comands one by one.
