@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <arg name="ns" default="/hsrb" /> 
+  <group ns="$(arg ns)">
+
+    <!-- The config.yaml file for the controller must be loaded before calling the controller spawner.
+         It is a good practice to name it the same as the launch file -->
+  
+    <rosparam command="load" file="$(find controllers_tutorials)/config/combined_resource_controller_hsrb.yaml"/>
+
+    <!-- When calling the controller spawner, the name parameter is for the node being launched, so it can be any.
+         "pkg", "type" and "output" parameters are recomended to stay as this example. 
+         Finally "args" parameter is the name of the controller displayed on the controller manager list. 
+         "args" must match the name stated on the config.yaml file.   -->
+
+    <node name="combined_resource_controller_spawner"
+          pkg="controller_manager" type="spawner" output="screen"
+          args="combined_resource_controller"/>
+
+  </group>
+        
+</launch>
+

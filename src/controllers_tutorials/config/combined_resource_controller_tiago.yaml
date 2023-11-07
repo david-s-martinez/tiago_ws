@@ -1,0 +1,13 @@
+combined_resource_controller:                                   # The name of the controller that will apear on the controller_manager list
+
+  type: "controllers_tutorials/CombinedResourceController"      # This must match the "class name" parameter on the controller_plugins.xml file
+  
+  joints:                                                       # Then, all the resources needed for the controller must be listed.
+    - arm_1_joint
+    - arm_2_joint
+    - arm_3_joint 
+    - arm_4_joint
+    - arm_5_joint
+    - arm_6_joint
+    - arm_7_joint
+

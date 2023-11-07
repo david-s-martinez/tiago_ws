@@ -1,0 +1,24 @@
+<library path="lib/libcontrollers_tutorials">
+
+  <class name="controllers_tutorials/CombinedResourceController" type="controllers_tutorials::CombinedResourceController" base_class_type="controller_interface::ControllerBase">
+    <description>
+        The CombinedResourceController is a simple controller that has multiple hardware interfaces.
+    </description>
+  </class> 
+  
+  <!-- All new controller plugins must be declared in this file following the same structure     
+  
+  <class name="controller_namespace/ClassName" type="controller_namespace::ClassName" base_class_type="controller_interface::ControllerBase">
+                                   
+    <description>
+        Description of the controller
+    </description>
+ 
+  </class> 
+  
+  The controller_namespace must be the same for all the controllers in the package, other controller_namespace must be used for other packages.
+  
+   -->
+
+</library>
+

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+  <name>controllers_tutorials</name>
+  <version>0.1.2</version>
+  <description>Tutorial to access robot's resources</description>
+
+  <maintainer email="rogelio.guadarrama@tum.de">Rogelio Guadarrama</maintainer> 
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>control_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>realtime_tools</build_depend>
+  <build_depend>controller_interface</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>control_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>realtime_tools</run_depend>
+  <run_depend>controller_interface</run_depend>
+
+  <export>
+    <controller_interface plugin="${prefix}/tutorial_controller_plugins.xml"/>
+  </export>
+
+</package>
