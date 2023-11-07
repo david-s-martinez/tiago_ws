@@ -20,7 +20,8 @@
     -->
 
     <env    name="GAZEBO_MODEL_PATH"  
-            value="$(optenv GAZEBO_MODEL_PATH):$(find ics_gazebo)/models"/>
+            value="$(optenv GAZEBO_MODEL_PATH):$(find ics_gazebo)/models:$(find tiago_gazebo)/models"/>
+            <!-- value="$(optenv GAZEBO_MODEL_PATH):$(find ics_gazebo)/models"/> -->
 
   <!-- start up world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
