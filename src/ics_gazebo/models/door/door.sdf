@@ -88,7 +88,7 @@
                         <uri>model://door/meshes/handle.stl</uri>
 
                         <!-- TODO:   Find a proper scale for the mesh -->
-	                    <scale> 0.001 0.001 0.001 </scale>
+	                    <scale> 0.002 0.002 0.002 </scale>
                     </mesh>
                 </geometry>
             </visual>
