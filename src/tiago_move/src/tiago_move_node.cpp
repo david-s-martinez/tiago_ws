@@ -12,7 +12,7 @@
 namespace tiago_move {
 // Creates a typedef for a SimpleActionClient that communicates with actions that adhere to the MoveBaseAction action interface.
 // typedef /*#>>>>TODO: ACTION CLIENT TYPE*/</*#>>>>TODO: ACTION NAME*/> MoveBaseClient;
-  Controller::Controller() 
+  Controller::Controller() : ac("move_base", true)
   {
   }
 
@@ -29,13 +29,17 @@ namespace tiago_move {
     
     /*#>>>>TODO:Exercise3 Load the 3D coordinates of three waypoints from the ROS parameter server*/
     /*#>>>>TODO:Exercise3 Store three waypoints in the vector nav_goals*/
+    if(!ros::param::get("/nav_goals", nav_goals))
+      return false;
 
 
     //#>>>>TODO:Exercise4 Load the target pose from parameter
-    if(!ros::param::get(/*#>>>>TODO: PARAMETER NAME*/, target_pose))
-      return false; 
+    // if(!ros::param::get("/target_pose"/*#>>>>TODO: PARAMETER NAME*/, target_pose))
+    //   return false; 
     //#>>>>TODO:Exercise4 Set the planner of your MoveGroupInterface
+    // body_planner_.setPlannerId("SBLkConfigDefault");
     //#>>>>TODO:Exercise4 Set the reference frame of your target pose 
+    // body_planner_.setPoseReferenceFrame("map");
     return true;
   }
 
@@ -44,7 +48,7 @@ namespace tiago_move {
   {
       move_base_msgs::MoveBaseGoal goal_msg;
 
-      goal_msg.target_pose.header.frame_id = "map";//#>>>>TODO: the reference frame name
+      goal_msg.target_pose.header.frame_id = "base_link";//#>>>>TODO: the reference frame name
       goal_msg.target_pose.header.stamp = ros::Time::now();
       goal_msg.target_pose.pose.position.x = goal[0];
       goal_msg.target_pose.pose.position.y = goal[1];
@@ -102,8 +106,9 @@ int main(int argc, char** argv){
 
       //#>>>>TODO:Exercise3 send the current goal to the action server with sendGoal function of SimpleActionClient instace.
       //#>>>>TODO:Exercise3 blocks until this goal finishes with waitForResult function of SimpleActionClient instace.
+      ac.sendGoalAndWait(controller.createGoal(controller.nav_goals[goal_index]));
 
-      if (/*#>>>>TODO:Exercise3 Check if the state of this goal is SUCCEEDED use getState function of SimpleActionClient instace*/) 
+      if (goal_state == actionlib::SimpleClientGoalState::SUCCEEDED)/*#>>>>TODO:Exercise3 Check if the state of this goal is SUCCEEDED use getState function of SimpleActionClient instace*/
       //#>>>> Hint: see https://docs.ros.org/en/diamondback/api/actionlib/html/classactionlib\_1\_1SimpleActionClient.html for the return type of getState function
       {
           ROS_INFO("Reached goal %d", goal_index + 1);
@@ -115,6 +120,7 @@ int main(int argc, char** argv){
           ros::Duration(1.0).sleep();
       }
       //#>>>>TODO:Exercise4 Call the move_arm function at propoer waypoint
+      // controller.move_arm(controller.target_pose);
   }
   spinner.stop();
   return 0;

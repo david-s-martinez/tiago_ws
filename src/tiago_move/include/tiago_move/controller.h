@@ -32,10 +32,10 @@ namespace tiago_move
       std::vector<double> target_pose;
 
       //#>>>>TODO:Exercise3 Creates a SimpleActionClient that communicate with the move_base action server.
-      
+      actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac;
 
       //#>>>>TODO:Exercise3 create a vector called nav_goals to store the waypoints
-
+      std::vector<double> nav_goals;
       // Uncomment the function for Exercise 4
       // int move_arm(std::vector<double>&);
   };
