@@ -17,7 +17,7 @@ roslaunch controllers_tutorials combined_resource_controller_tiago.launch
 Ex3:
 
 roslaunch tiago_2dnav_gazebo tiago_mapping.launch public_sim:=true world:=tutorial_office
-roslaunch tiago_2dnav_gazebo tiago_mapping.launch public_sim:=true lost:=true  map:=tutorial3_1
+roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true lost:=true map:=$HOME/.pal/tiago_maps/configurations/tutorial3_1
 roslaunch tiago_localization tiago_localization.launch
 
 Installation of the tmc ROS Noetic packages.
