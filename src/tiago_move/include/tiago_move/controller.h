@@ -16,7 +16,7 @@ namespace tiago_move
   {
     private:
       //#>>>>TODO:Exercise4 create a MoveGroupInterface instance with name "body_planner_" for MoveGroup "armtorso"
-
+    moveit::planning_interface::MoveGroupInterface body_planner_;
     public:
 
       Controller();
