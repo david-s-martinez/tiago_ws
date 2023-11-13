@@ -35,7 +35,7 @@ namespace tiago_move
       actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac;
 
       //#>>>>TODO:Exercise3 create a vector called nav_goals to store the waypoints
-      std::vector<double> nav_goals;
+      std::vector<move_base_msgs::MoveBaseGoal> nav_goals;
       // Uncomment the function for Exercise 4
       // int move_arm(std::vector<double>&);
   };

@@ -12,8 +12,7 @@
 namespace tiago_move {
 // Creates a typedef for a SimpleActionClient that communicates with actions that adhere to the MoveBaseAction action interface.
 // typedef /*#>>>>TODO: ACTION CLIENT TYPE*/</*#>>>>TODO: ACTION NAME*/> MoveBaseClient;
-  Controller::Controller() : ac("move_base", true)
-  {
+  Controller::Controller() : ac("move_base", true),body_planner_("arm_torso") {
   }
 
   Controller::~Controller()
@@ -29,10 +28,33 @@ namespace tiago_move {
     
     /*#>>>>TODO:Exercise3 Load the 3D coordinates of three waypoints from the ROS parameter server*/
     /*#>>>>TODO:Exercise3 Store three waypoints in the vector nav_goals*/
-    if(!ros::param::get("/nav_goals", nav_goals))
-      return false;
+    // if(!ros::param::get("/nav_goals", nav_goals)){
+    //   return false;
+    // }
+    std::vector<std::string> waypoints = {"waypoint_A", "waypoint_B", "waypoint_C"};
 
+    for (const auto &waypoint : waypoints)
+    {
+        move_base_msgs::MoveBaseGoal goal;
 
+        // Retrieve the waypoint from the parameter server
+        std::vector<double> waypoint_values;
+        if (!ros::param::get(waypoint, waypoint_values))
+        {
+            ROS_ERROR("Failed to retrieve waypoint %s from the parameter server", waypoint.c_str());
+            return -1;
+        }
+
+        // Fill in the MoveBaseGoal message
+        goal.target_pose.header.frame_id = "map";  // Assuming waypoints are specified in the map frame
+        goal.target_pose.header.stamp = ros::Time::now();
+        goal.target_pose.pose.position.x = waypoint_values[0];
+        goal.target_pose.pose.position.y = waypoint_values[1];
+        goal.target_pose.pose.orientation.w = waypoint_values[2];
+
+        // Add the goal to the vector
+        nav_goals.push_back(goal);
+    }
     //#>>>>TODO:Exercise4 Load the target pose from parameter
     // if(!ros::param::get("/target_pose"/*#>>>>TODO: PARAMETER NAME*/, target_pose))
     //   return false; 
@@ -48,7 +70,7 @@ namespace tiago_move {
   {
       move_base_msgs::MoveBaseGoal goal_msg;
 
-      goal_msg.target_pose.header.frame_id = "base_link";//#>>>>TODO: the reference frame name
+      goal_msg.target_pose.header.frame_id = "map";//#>>>>TODO: the reference frame name
       goal_msg.target_pose.header.stamp = ros::Time::now();
       goal_msg.target_pose.pose.position.x = goal[0];
       goal_msg.target_pose.pose.position.y = goal[1];
@@ -106,8 +128,16 @@ int main(int argc, char** argv){
 
       //#>>>>TODO:Exercise3 send the current goal to the action server with sendGoal function of SimpleActionClient instace.
       //#>>>>TODO:Exercise3 blocks until this goal finishes with waitForResult function of SimpleActionClient instace.
-      ac.sendGoalAndWait(controller.createGoal(controller.nav_goals[goal_index]));
+      std::vector<double> goal_values = {
+            controller.nav_goals[goal_index].target_pose.pose.position.x,
+            controller.nav_goals[goal_index].target_pose.pose.position.y,
+            controller.nav_goals[goal_index].target_pose.pose.orientation.w
+        };
 
+        // Access the SimpleActionClient through the controller object
+      controller.ac.sendGoalAndWait(controller.createGoal(goal_values));
+      // Get the goal state using the controller object
+      actionlib::SimpleClientGoalState goal_state = controller.ac.getState();
       if (goal_state == actionlib::SimpleClientGoalState::SUCCEEDED)/*#>>>>TODO:Exercise3 Check if the state of this goal is SUCCEEDED use getState function of SimpleActionClient instace*/
       //#>>>> Hint: see https://docs.ros.org/en/diamondback/api/actionlib/html/classactionlib\_1\_1SimpleActionClient.html for the return type of getState function
       {
