@@ -31,7 +31,7 @@ namespace tiago_move {
     // if(!ros::param::get("/nav_goals", nav_goals)){
     //   return false;
     // }
-    std::vector<std::string> waypoints = {"waypoint_A", "waypoint_B", "waypoint_C"};
+    std::vector<std::string> waypoints = {"waypoint_A", "waypoint_A_1", "waypoint_B", "waypoint_C", "waypoint_C_1","waypoint_C_2"};
 
     for (const auto &waypoint : waypoints)
     {
