@@ -25,12 +25,8 @@ namespace tiago_move {
     while(!ac.waitForServer(ros::Duration(5.0))){
       ROS_INFO("Waiting for the move_base action server to come up");
     }
-    
     /*#>>>>TODO:Exercise3 Load the 3D coordinates of three waypoints from the ROS parameter server*/
     /*#>>>>TODO:Exercise3 Store three waypoints in the vector nav_goals*/
-    // if(!ros::param::get("/nav_goals", nav_goals)){
-    //   return false;
-    // }
     std::vector<std::string> waypoints = {"waypoint_A", "waypoint_A_1", "waypoint_B", "waypoint_B_1","waypoint_C", "waypoint_C_1","waypoint_C_2"};
 
     for (const auto &waypoint : waypoints)
@@ -39,10 +35,11 @@ namespace tiago_move {
 
         // Retrieve the waypoint from the parameter server
         std::vector<double> waypoint_values;
+
         if (!ros::param::get(waypoint, waypoint_values))
         {
-            ROS_ERROR("Failed to retrieve waypoint %s from the parameter server", waypoint.c_str());
-            return -1;
+          ROS_ERROR("Failed to retrieve waypoint %s from the parameter server", waypoint.c_str());
+          return -1;
         }
 
         // Fill in the MoveBaseGoal message
@@ -63,25 +60,11 @@ namespace tiago_move {
       return false; 
     }
     //#>>>>TODO:Exercise4 Set the planner of your MoveGroupInterface
-  //   arm_torso:
-  // planner_configs:
-  //   - SBLkConfigDefault
-  //   - ESTkConfigDefault
-  //   - LBKPIECEkConfigDefault
-  //   - BKPIECEkConfigDefault
-  //   - KPIECEkConfigDefault
-  //   - RRTkConfigDefault
-  //   - RRTConnectkConfigDefault
-  //   - RRTstarkConfigDefault
-  //   - TRRTkConfigDefault
-  //   - PRMkConfigDefault
-  //   - PRMstarkConfigDefault
     body_planner_.setPlannerId("SBLkConfigDefault");
     //#>>>>TODO:Exercise4 Set the reference frame of your target pose 
     body_planner_.setPoseReferenceFrame("base_footprint");
     return true;
   }
-
 
   move_base_msgs::MoveBaseGoal Controller::createGoal(std::vector<double> &goal)
   {
@@ -97,34 +80,11 @@ namespace tiago_move {
   }
 
   // Uncomment the function for Exercise 4
-  // int Controller::move_arm(std::vector<double> &goal)
-  // {
-  //   // input: std::vector<double> &goal [x,y,z,r,p,y]
-  //   //#>>>>TODO:Exercise4 Create a msg of type geometry_msgs::PoseStamped from the input vector 
-
-  //   //#>>>>TODO:Exercise4 Set the target pose for the planner setPoseTarget function of your MoveGroupInterface instance
-    
-
-  //   ROS_INFO_STREAM("Planning to move " << 
-  //                   body_planner_.getEndEffectorLink() << " to a target pose expressed in " <<
-  //                   body_planner_.getPlanningFrame());
-
-  //   body_planner_.setStartStateToCurrentState();
-  //   body_planner_.setMaxVelocityScalingFactor(1.0);
-
-  //   moveit::planning_interface::MoveGroupInterface::Plan motion_plan;
-  //   //set maximum time to find a plan
-  //   body_planner_.setPlanningTime(5.0);
-
-  //   //#>>>>TODO:Exercise4 Start the planning by calling member function "plan" and pass the motion_plan as argument
-    
-  //   ROS_INFO_STREAM("Plan found in " << motion_plan.planning_time_ << " seconds");
-  //   //#>>>>TODO:Exercise4 Execute the plan by calling member function "move" of the MoveGroupInterface instance
-    
-    
-  //   return EXIT_SUCCESS;
-  // }
   int Controller::move_arm(std::vector<double>& goal) {
+    // input: std::vector<double> &goal [x,y,z,r,p,y]
+    //#>>>>TODO:Exercise4 Create a msg of type geometry_msgs::PoseStamped from the input vector 
+    //#>>>>TODO:Exercise4 Set the target pose for the planner setPoseTarget function of your MoveGroupInterface instance
+    
     // Create a msg of type geometry_msgs::PoseStamped from the input vector
     geometry_msgs::PoseStamped target_pose_msg;
     target_pose_msg.header.frame_id = "base_footprint";  // Assuming the target pose is specified in the map frame
@@ -151,9 +111,11 @@ namespace tiago_move {
     // Set maximum time to find a plan
     body_planner_.setPlanningTime(5.0);
 
+    //#>>>>TODO:Exercise4 Start the planning by calling member function "plan" and pass the motion_plan as argument
     // Start the planning by calling member function "plan" and pass the motion_plan as an argument
     bool success = (body_planner_.plan(motion_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
+    //#>>>>TODO:Exercise4 Execute the plan by calling member function "move" of the MoveGroupInterface instance
     if (success) {
         ROS_INFO_STREAM("Plan found in " << motion_plan.planning_time_ << " seconds");
         // Execute the plan by calling member function "move" of the MoveGroupInterface instance
@@ -168,16 +130,18 @@ namespace tiago_move {
 }
 
 int main(int argc, char** argv){
+
   ros::init(argc, argv, "tiago_move");
   ros::NodeHandle nh;
       
   ros::AsyncSpinner spinner(4);
   spinner.start();
+
   tiago_move::Controller controller;
   if(!controller.initialize(nh))
   {
-      ROS_ERROR_STREAM("tiago_move::Controller failed to initialize");
-      return -1;
+    ROS_ERROR_STREAM("tiago_move::Controller failed to initialize");
+    return -1;
   }
 
   int goal_index = 0;
@@ -197,8 +161,10 @@ int main(int argc, char** argv){
       controller.ac.sendGoalAndWait(controller.createGoal(goal_values));
       // Get the goal state using the controller object
       actionlib::SimpleClientGoalState goal_state = controller.ac.getState();
-      if (goal_state == actionlib::SimpleClientGoalState::SUCCEEDED)/*#>>>>TODO:Exercise3 Check if the state of this goal is SUCCEEDED use getState function of SimpleActionClient instace*/
+      /*#>>>>TODO:Exercise3 Check if the state of this goal is SUCCEEDED use getState function of SimpleActionClient instace*/
       //#>>>> Hint: see https://docs.ros.org/en/diamondback/api/actionlib/html/classactionlib\_1\_1SimpleActionClient.html for the return type of getState function
+      //#>>>>TODO:Exercise4 Call the move_arm function at propoer waypoint
+      if (goal_state == actionlib::SimpleClientGoalState::SUCCEEDED)
       {
           ROS_INFO("Reached goal %d", goal_index + 1);
           goal_index = (goal_index + 1) % controller.nav_goals.size();
@@ -219,12 +185,12 @@ int main(int argc, char** argv){
           ROS_WARN("Failed to reach goal %d", goal_index + 1);
           ros::Duration(1.0).sleep();
       }
-      //#>>>>TODO:Exercise4 Call the move_arm function at propoer waypoint
-      // controller.move_arm(controller.target_pose);
   }
   spinner.stop();
   return 0;
 }
+// Alternative main to debug arm movement:
+
 // int main(int argc, char** argv){
 //   ros::init(argc, argv, "tiago_move");
 //   ros::NodeHandle nh;
