@@ -56,12 +56,26 @@ namespace tiago_move {
         nav_goals.push_back(goal);
     }
     //#>>>>TODO:Exercise4 Load the target pose from parameter
-    // if(!ros::param::get("/target_pose"/*#>>>>TODO: PARAMETER NAME*/, target_pose))
-    //   return false; 
+    if(!ros::param::get("/target_pose"/*#>>>>TODO: PARAMETER NAME*/, target_pose)){
+      return false; 
+    }
     //#>>>>TODO:Exercise4 Set the planner of your MoveGroupInterface
-    // body_planner_.setPlannerId("SBLkConfigDefault");
+  //   arm_torso:
+  // planner_configs:
+  //   - SBLkConfigDefault
+  //   - ESTkConfigDefault
+  //   - LBKPIECEkConfigDefault
+  //   - BKPIECEkConfigDefault
+  //   - KPIECEkConfigDefault
+  //   - RRTkConfigDefault
+  //   - RRTConnectkConfigDefault
+  //   - RRTstarkConfigDefault
+  //   - TRRTkConfigDefault
+  //   - PRMkConfigDefault
+  //   - PRMstarkConfigDefault
+    body_planner_.setPlannerId("SBLkConfigDefault");
     //#>>>>TODO:Exercise4 Set the reference frame of your target pose 
-    // body_planner_.setPoseReferenceFrame("map");
+    body_planner_.setPoseReferenceFrame("map");
     return true;
   }
 
@@ -107,7 +121,49 @@ namespace tiago_move {
     
   //   return EXIT_SUCCESS;
   // }
+  int Controller::move_arm(std::vector<double>& goal) {
+    // Create a msg of type geometry_msgs::PoseStamped from the input vector
+    geometry_msgs::PoseStamped target_pose;
+    target_pose.header.frame_id = "map";  // Assuming the target pose is specified in the map frame
+    target_pose.header.stamp = ros::Time::now();
+    target_pose.pose.position.x = goal[0];
+    target_pose.pose.position.y = goal[1];
+    target_pose.pose.position.z = goal[2];
+    target_pose.pose.orientation.x = goal[3];
+    target_pose.pose.orientation.y = goal[4];
+    target_pose.pose.orientation.z = goal[5];
+    // target_pose.pose.orientation.w = goal[6];
+
+    // Set the target pose for the planner setPoseTarget function of your MoveGroupInterface instance
+    body_planner_.setPoseTarget(target_pose);
+
+    ROS_INFO_STREAM("Planning to move " << 
+                    body_planner_.getEndEffectorLink() << " to a target pose expressed in " <<
+                    body_planner_.getPlanningFrame());
+
+    body_planner_.setStartStateToCurrentState();
+    body_planner_.setMaxVelocityScalingFactor(1.0);
+
+    moveit::planning_interface::MoveGroupInterface::Plan motion_plan;
+    // Set maximum time to find a plan
+    body_planner_.setPlanningTime(5.0);
+
+    // Start the planning by calling member function "plan" and pass the motion_plan as an argument
+    bool success = (body_planner_.plan(motion_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+    if (success) {
+        ROS_INFO_STREAM("Plan found in " << motion_plan.planning_time_ << " seconds");
+        // Execute the plan by calling member function "move" of the MoveGroupInterface instance
+        body_planner_.move();
+    } else {
+        ROS_ERROR("Failed to plan motion");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
+}
+
 int main(int argc, char** argv){
   ros::init(argc, argv, "tiago_move");
   ros::NodeHandle nh;
@@ -143,6 +199,11 @@ int main(int argc, char** argv){
       {
           ROS_INFO("Reached goal %d", goal_index + 1);
           goal_index = (goal_index + 1) % controller.nav_goals.size();
+          // Check if this is the 4th goal and execute move_arm
+          if (goal_index == 4) {
+              ROS_INFO("Executing move_arm after reaching the 4th goal");
+              controller.move_arm(controller.target_pose);
+          }
       }
       else
       {
@@ -155,5 +216,28 @@ int main(int argc, char** argv){
   spinner.stop();
   return 0;
 }
+// int main(int argc, char** argv){
+//   ros::init(argc, argv, "tiago_move");
+//   ros::NodeHandle nh;
+      
+//   ros::AsyncSpinner spinner(4);
+//   spinner.start();
+//   tiago_move::Controller controller;
 
+//   if(!controller.initialize(nh))
+//   {
+//       ROS_ERROR_STREAM("tiago_move::Controller failed to initialize");
+//       return -1;
+//   }
 
+//   int goal_index = 0;
+//   while (ros::ok())
+//   {
+
+//     ROS_INFO("Executing move_arm after reaching the 4th goal");
+//     controller.move_arm(controller.target_pose);
+//     ros::Duration(1.0).sleep();
+//   }
+//   spinner.stop();
+//   return 0;
+// }
