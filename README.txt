@@ -1,7 +1,8 @@
 Tiago Installation:
 https://wiki.ros.org/Robots/TIAGo/Tutorials/Installation/InstallUbuntuAndROS
 rosinstall ./src /opt/ros/noetic tiago_public−noetic.rosinstall
-Ex2:
+
+Tutorial 2:
 Tiago was used for all.
 
 6.1 Simulation scenario:
@@ -14,11 +15,21 @@ roslaunch ics_gazebo tiago.launch world_suffix:=tutorial
 rosrun look_to_point look_to_point
 TODO based on look_to_point rosrun:
 roslaunch controllers_tutorials combined_resource_controller_tiago.launch
-Ex3:
 
+Tutorial 3:
+Tiago was used for all.
+
+1: Generate maps for two worlds using Tiago 
 roslaunch tiago_2dnav_gazebo tiago_mapping.launch public_sim:=true world:=tutorial_office
 roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true lost:=true map:=$HOME/.pal/tiago_maps/configurations/tutorial3_1
+*Change map path accordingly
+
+2: Localization
 roslaunch tiago_localization tiago_localization.launch
+
+3: Navigate the Map, 4: Planning in Cartesian space with MoveIt!
+roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true
+roslaunch tiago_move tiago_move.launch
 
 Installation of the tmc ROS Noetic packages.
 
