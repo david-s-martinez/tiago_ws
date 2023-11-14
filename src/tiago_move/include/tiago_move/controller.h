@@ -30,6 +30,7 @@ namespace tiago_move
      
 
       std::vector<double> target_pose;
+      std::vector<double> target_pose_1;
 
       //#>>>>TODO:Exercise3 Creates a SimpleActionClient that communicate with the move_base action server.
       actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac;

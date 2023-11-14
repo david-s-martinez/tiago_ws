@@ -31,7 +31,7 @@ namespace tiago_move {
     // if(!ros::param::get("/nav_goals", nav_goals)){
     //   return false;
     // }
-    std::vector<std::string> waypoints = {"waypoint_A", "waypoint_A_1", "waypoint_B", "waypoint_C", "waypoint_C_1","waypoint_C_2"};
+    std::vector<std::string> waypoints = {"waypoint_A", "waypoint_A_1", "waypoint_B", "waypoint_B_1","waypoint_C", "waypoint_C_1","waypoint_C_2"};
 
     for (const auto &waypoint : waypoints)
     {
@@ -59,6 +59,9 @@ namespace tiago_move {
     if(!ros::param::get("/target_pose"/*#>>>>TODO: PARAMETER NAME*/, target_pose)){
       return false; 
     }
+    if(!ros::param::get("/target_pose_1"/*#>>>>TODO: PARAMETER NAME*/, target_pose_1)){
+      return false; 
+    }
     //#>>>>TODO:Exercise4 Set the planner of your MoveGroupInterface
   //   arm_torso:
   // planner_configs:
@@ -75,7 +78,7 @@ namespace tiago_move {
   //   - PRMstarkConfigDefault
     body_planner_.setPlannerId("SBLkConfigDefault");
     //#>>>>TODO:Exercise4 Set the reference frame of your target pose 
-    body_planner_.setPoseReferenceFrame("map");
+    body_planner_.setPoseReferenceFrame("base_footprint");
     return true;
   }
 
@@ -123,19 +126,19 @@ namespace tiago_move {
   // }
   int Controller::move_arm(std::vector<double>& goal) {
     // Create a msg of type geometry_msgs::PoseStamped from the input vector
-    geometry_msgs::PoseStamped target_pose;
-    target_pose.header.frame_id = "map";  // Assuming the target pose is specified in the map frame
-    target_pose.header.stamp = ros::Time::now();
-    target_pose.pose.position.x = goal[0];
-    target_pose.pose.position.y = goal[1];
-    target_pose.pose.position.z = goal[2];
-    target_pose.pose.orientation.x = goal[3];
-    target_pose.pose.orientation.y = goal[4];
-    target_pose.pose.orientation.z = goal[5];
-    // target_pose.pose.orientation.w = goal[6];
+    geometry_msgs::PoseStamped target_pose_msg;
+    target_pose_msg.header.frame_id = "base_footprint";  // Assuming the target pose is specified in the map frame
+    target_pose_msg.header.stamp = ros::Time::now();
+    target_pose_msg.pose.position.x = goal[0];
+    target_pose_msg.pose.position.y = goal[1];
+    target_pose_msg.pose.position.z = goal[2];
+    target_pose_msg.pose.orientation.x = goal[3];
+    target_pose_msg.pose.orientation.y = goal[4];
+    target_pose_msg.pose.orientation.z = goal[5];
+    // target_pose_msg.pose.orientation.w = goal[6];
 
     // Set the target pose for the planner setPoseTarget function of your MoveGroupInterface instance
-    body_planner_.setPoseTarget(target_pose);
+    body_planner_.setPoseTarget(target_pose_msg);
 
     ROS_INFO_STREAM("Planning to move " << 
                     body_planner_.getEndEffectorLink() << " to a target pose expressed in " <<
@@ -200,8 +203,14 @@ int main(int argc, char** argv){
           ROS_INFO("Reached goal %d", goal_index + 1);
           goal_index = (goal_index + 1) % controller.nav_goals.size();
           // Check if this is the 4th goal and execute move_arm
-          if (goal_index == 4) {
-              ROS_INFO("Executing move_arm after reaching the 4th goal");
+          if (goal_index == 3) {
+              ROS_INFO("Executing move_arm to pre lift");
+              controller.move_arm(controller.target_pose);
+          }
+         if (goal_index == 4) {
+              ROS_INFO("Executing move_arm to lift");
+              controller.move_arm(controller.target_pose_1);
+              ROS_INFO("Executing move_arm to post lift");
               controller.move_arm(controller.target_pose);
           }
       }
