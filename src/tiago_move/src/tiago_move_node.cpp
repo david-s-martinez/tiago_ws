@@ -92,10 +92,7 @@ namespace tiago_move {
     target_pose_msg.pose.position.x = goal[0];
     target_pose_msg.pose.position.y = goal[1];
     target_pose_msg.pose.position.z = goal[2];
-    target_pose_msg.pose.orientation.x = goal[3];
-    target_pose_msg.pose.orientation.y = goal[4];
-    target_pose_msg.pose.orientation.z = goal[5];
-    // target_pose_msg.pose.orientation.w = goal[6];
+    target_pose_msg.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(goal[3],goal[4],goal[5]);
 
     // Set the target pose for the planner setPoseTarget function of your MoveGroupInterface instance
     body_planner_.setPoseTarget(target_pose_msg);
@@ -172,10 +169,16 @@ int main(int argc, char** argv){
           if (goal_index == 3) {
               ROS_INFO("Executing move_arm to pre lift");
               controller.move_arm(controller.target_pose);
+              ros::Duration(1.0).sleep();
+              controller.move_arm(controller.target_pose_1);
+              ros::Duration(1.0).sleep();
+              controller.move_arm(controller.target_pose);
+              ros::Duration(1.0).sleep();
           }
          if (goal_index == 4) {
               ROS_INFO("Executing move_arm to lift");
               controller.move_arm(controller.target_pose_1);
+              ros::Duration(1.0).sleep();
               ROS_INFO("Executing move_arm to post lift");
               controller.move_arm(controller.target_pose);
           }
@@ -211,6 +214,8 @@ int main(int argc, char** argv){
 
 //     ROS_INFO("Executing move_arm after reaching the 4th goal");
 //     controller.move_arm(controller.target_pose);
+//     ros::Duration(1.0).sleep();
+//     controller.move_arm(controller.target_pose_1);
 //     ros::Duration(1.0).sleep();
 //   }
 //   spinner.stop();
