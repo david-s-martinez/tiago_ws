@@ -34,7 +34,16 @@ roslaunch tiago_move tiago_move.launch
 Tutorial 4:
 Tiago was used for all.
 1: Create a world for perception
+
 roslaunch object_detection_world tiago.launch world_suffix:=objects
+
+2: Object detection
+TODO
+
+3: Point cloud segmentation
+
+roslaunch plane_segmentation plane_segmentation_tiago.launch
+Find the right view with:
 rosrun look_to_point look_to_point
 
 ____________________________________________
