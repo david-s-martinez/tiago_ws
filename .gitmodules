@@ -1,0 +1,4 @@
+[submodule "YOLACT-mini-Instance-segmentation"]
+	path = YOLACT-mini-Instance-segmentation
+	url = https://github.com/davidmartinez13/YOLACT-mini-Instance-segmentation
+	branch = main
