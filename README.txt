@@ -31,6 +31,13 @@ roslaunch tiago_localization tiago_localization.launch
 roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true
 roslaunch tiago_move tiago_move.launch
 
+Tutorial 4:
+Tiago was used for all.
+1: Create a world for perception
+roslaunch object_detection_world tiago.launch world_suffix:=objects
+rosrun look_to_point look_to_point
+
+____________________________________________
 Installation of the tmc ROS Noetic packages.
 
 These are not free packages. Please install them in your remote workstation and do not distribute the instruction set. Open one terminal and run the following comands one by one.
