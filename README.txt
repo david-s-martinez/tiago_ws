@@ -43,11 +43,20 @@ Follow the installation on the Yolact repo.
 cd YOLACT-mini-Instance-segmentation
 python detect_tiago.py
 
+object detection video:
+https://youtu.be/Gstdm_uIWaY
+
 3: Point cloud segmentation
 
 roslaunch plane_segmentation plane_segmentation_tiago.launch
 Find the right view with:
 rosrun look_to_point look_to_point
+
+table segmentation video:
+https://youtu.be/O1RgS5MCy3w
+
+object segmentation video:
+https://youtu.be/WEavimqxH1s
 
 4: TODO
 ____________________________________________
