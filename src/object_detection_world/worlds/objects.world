@@ -885,7 +885,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/base/base_collision.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/base/base_collision.stl</uri>
             </mesh>
           </geometry>
           <surface>
@@ -1036,7 +1036,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/base/base.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/base/base.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1051,7 +1051,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/objects/antenna.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/objects/antenna.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1066,7 +1066,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/objects/antenna.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/objects/antenna.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1081,7 +1081,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/sensors/sick_tim551.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/sensors/sick_tim551.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1096,7 +1096,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/sensors/srf05.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/sensors/srf05.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1111,7 +1111,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/sensors/srf05.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/sensors/srf05.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1126,7 +1126,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/sensors/srf05.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/sensors/srf05.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1155,7 +1155,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/torso/torso_fix.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/torso/torso_fix.stl</uri>
             </mesh>
           </geometry>
         </visual>
@@ -1164,7 +1164,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/base/base_ring.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/base/base_ring.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1406,7 +1406,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_1.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_1.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1484,7 +1484,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_2.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_2.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1535,7 +1535,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_1.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_1.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1613,7 +1613,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_2.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_2.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1664,7 +1664,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_1.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_1.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1742,7 +1742,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_2.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_2.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1793,7 +1793,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_1.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_1.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1871,7 +1871,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_2.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/wheels/caster_2.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -1990,7 +1990,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/wheels/wheel.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/wheels/wheel.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -2109,7 +2109,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pmb2_robot/pmb2_description/meshes/wheels/wheel.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pmb2_robot/pmb2_description/meshes/wheels/wheel.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -2162,7 +2162,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/torso/torso_lift_collision_core.dae</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/torso/torso_lift_collision_core.dae</uri>
             </mesh>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -2184,7 +2184,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/torso/torso_lift_collision_shoulder.dae</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/torso/torso_lift_collision_shoulder.dae</uri>
             </mesh>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -2206,7 +2206,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/torso/torso_lift_collision_neck.dae</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/torso/torso_lift_collision_neck.dae</uri>
             </mesh>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -2228,7 +2228,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/torso/torso_lift_with_arm.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/torso/torso_lift_with_arm.stl</uri>
             </mesh>
           </geometry>
         </visual>
@@ -2285,7 +2285,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_1_collision.dae</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_1_collision.dae</uri>
             </mesh>
           </geometry>
           <surface>
@@ -2310,7 +2310,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_1.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_1.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -2373,7 +2373,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_2_collision.dae</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_2_collision.dae</uri>
             </mesh>
           </geometry>
           <surface>
@@ -2398,7 +2398,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_2.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_2.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -2461,7 +2461,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_3_collision.dae</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_3_collision.dae</uri>
             </mesh>
           </geometry>
           <surface>
@@ -2486,7 +2486,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_3.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_3.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -2549,7 +2549,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_4_collision.dae</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_4_collision.dae</uri>
             </mesh>
           </geometry>
           <surface>
@@ -2574,7 +2574,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_4.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_4.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -2637,7 +2637,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_5_collision-wrist-2017.dae</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_5_collision-wrist-2017.dae</uri>
             </mesh>
           </geometry>
           <surface>
@@ -2662,7 +2662,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_5-wrist-2017.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_5-wrist-2017.stl</uri>
             </mesh>
           </geometry>
         </visual>
@@ -2719,7 +2719,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_6_collision-wrist-2017.dae</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_6_collision-wrist-2017.dae</uri>
             </mesh>
           </geometry>
           <surface>
@@ -2744,7 +2744,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/arm/arm_6-wrist-2017.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/arm/arm_6-wrist-2017.stl</uri>
             </mesh>
           </geometry>
         </visual>
@@ -2825,7 +2825,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pal_gripper/pal_gripper_description/meshes/gripper_link_collision.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pal_gripper/pal_gripper_description/meshes/gripper_link_collision.stl</uri>
             </mesh>
           </geometry>
           <surface>
@@ -2856,7 +2856,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pal_gripper/pal_gripper_description/meshes/gripper_link.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pal_gripper/pal_gripper_description/meshes/gripper_link.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -2956,7 +2956,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pal_gripper/pal_gripper_description/meshes/gripper_finger_link.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pal_gripper/pal_gripper_description/meshes/gripper_finger_link.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -3056,7 +3056,7 @@
           <geometry>
             <mesh>
               <scale>-1 -1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/pal_gripper/pal_gripper_description/meshes/gripper_finger_link.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/pal_gripper/pal_gripper_description/meshes/gripper_finger_link.stl</uri>
             </mesh>
           </geometry>
           <material>
@@ -3119,7 +3119,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/head/head_1_collision.dae</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/head/head_1_collision.dae</uri>
             </mesh>
           </geometry>
           <surface>
@@ -3144,7 +3144,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/head/head_1.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/head/head_1.stl</uri>
             </mesh>
           </geometry>
         </visual>
@@ -3191,7 +3191,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/head/head_2_collision.dae</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/head/head_2_collision.dae</uri>
             </mesh>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -3213,7 +3213,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/david/tiago_public_ws/src/tiago_robot/tiago_description/meshes/head/head_2.stl</uri>
+              <uri>/home/jin/ros/tiago_ws/src/tiago_robot/tiago_description/meshes/head/head_2.stl</uri>
             </mesh>
           </geometry>
         </visual>
