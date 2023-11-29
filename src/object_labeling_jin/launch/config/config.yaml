@@ -1,0 +1,3 @@
+cluster_tolerance: 0.05
+cluster_size_min: 10
+cluster_size_max: 10000
