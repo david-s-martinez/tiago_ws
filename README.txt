@@ -69,6 +69,7 @@ roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pic
 2: Perception
 
 3: Robot manipulation
+roslaunch tiago_move_pick_place tiago_move.launch
 
 4: State machine
 

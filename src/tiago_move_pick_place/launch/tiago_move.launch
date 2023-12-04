@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+  <rosparam file="$(find tiago_move_pick_place)/launch/config/config.yaml" />
+
+  <node name="tiago_move_pick_place_node" pkg="tiago_move_pick_place" type="tiago_move_pick_place_node" output="screen"/>
+
+</launch>
