@@ -59,6 +59,19 @@ object segmentation video:
 https://youtu.be/WEavimqxH1s
 
 4: TODO
+
+Tutorial 5
+
+1: Navigation
+First move the src/object_detection_world/worlds/pick_place.world file to pal_gazebo_worlds/worlds
+roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
+*Change map path according to your system, all maps are found under the ./maps/ directory in this repo.
+2: Perception
+
+3: Robot manipulation
+
+4: State machine
+
 ____________________________________________
 Installation of the tmc ROS Noetic packages.
 
