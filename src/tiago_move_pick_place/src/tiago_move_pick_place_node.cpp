@@ -213,8 +213,8 @@ int main(int argc, char** argv){
   {
 
     ROS_INFO("Executing move_arm after reaching the 4th goal");
-    controller.move_arm(controller.target_pose);
-    ros::Duration(1.0).sleep();
+    // controller.move_arm(controller.target_pose);
+    // ros::Duration(1.0).sleep();
     controller.move_arm(controller.target_pose_1);
     ros::Duration(1.0).sleep();
   }

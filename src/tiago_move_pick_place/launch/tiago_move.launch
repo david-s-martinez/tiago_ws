@@ -3,6 +3,7 @@
 
   <rosparam file="$(find tiago_move_pick_place)/launch/config/config.yaml" />
 
-  <node name="tiago_move_pick_place_node" pkg="tiago_move_pick_place" type="tiago_move_pick_place_node" output="screen"/>
-
+  <!-- <node name="tiago_move_pick_place_node" pkg="tiago_move_pick_place" type="tiago_move_pick_place_node" output="screen"/> -->
+   <node pkg="tiago_move_pick_place" name="tiago_pick_place" type="tiago_pick_place.py" output="screen"> 
+  </node>
 </launch>

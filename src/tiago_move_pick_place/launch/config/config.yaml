@@ -1,11 +1,11 @@
 # >>>TODO: this needs tunning
 
-waypoint_A: [-3.98,-1.99, 0.785398]
-waypoint_A_1: [1.0,0.0,1.0]
-waypoint_B: [-3.83,-8.88,1.0]
-waypoint_B_1: [-2.3,-10.8,1.0]
-waypoint_C: [-1.19,-12.0,0.785398]
-waypoint_C_1: [0.0,-12.0,1.0]
-waypoint_C_2: [0.0,0.0,1.0]
+waypoint_A: [1.45,-2.71, 2.0]
+waypoint_A_1: [1.86,3.6,2.0]
+waypoint_B: [-0.519,6.91, 2.0]
+waypoint_B_1: [-2.52,7.36,2.0]
+waypoint_C: [-0.519,6.91, 2.0]
+waypoint_C_1: [1.86,3.6,2.0]
+waypoint_C_2: [1.45,-2.71, 2.0]
 target_pose: [0.4, -0.1, 0.25, 0.0, 0.0, 0.0]
 target_pose_1: [0.4, -0.1, 0.78, 1.57, 0.0, 0.0]
