@@ -65,14 +65,31 @@ Tutorial 5
 
 1: Navigation
 First move the src/object_detection_world/worlds/pick_place.world file to pal_gazebo_worlds/worlds
-roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
+
+
+
+$ roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
 *Change map path according to your system, all maps are found under the ./maps/ directory in this repo.
+
+$ rosservice call /global_localization "{}"
+
+$ roslaunch tiago_localization tiago_localization.launch
+
 2: Perception
 
 3: Robot manipulation
-roslaunch tiago_move_pick_place tiago_move.launch
+$ roslaunch tiago_move_pick_place tiago_move.launch
 
 4: State machine
+
+$ rosrun smach_viewer smach_viewer.py
+
+$ roslaunch hsrb_task_manager task_manager.launch
+
+rosparam set /move_base/local_planner/goal_tolerance 0.5
+rosparam set /move_base/local_planner/yaw_goal_tolerance 0.1
+rostopic echo /move_base/feedback
+
 
 ____________________________________________
 Installation of the tmc ROS Noetic packages.
