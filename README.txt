@@ -80,7 +80,8 @@ $ roslaunch tiago_localization tiago_localization.launch
 3: Robot manipulation
 $ roslaunch tiago_move_pick_place tiago_move.launch
 
-4: State machine
+4: State 
+$ sudo apt-get install ros-noetic-smach-viewer
 
 $ rosrun smach_viewer smach_viewer.py
 
