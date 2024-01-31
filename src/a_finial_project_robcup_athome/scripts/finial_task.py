@@ -24,7 +24,7 @@ def response_something(args):
     args = command_line.split()  
     # If the user adds some input, say what he wrote
     if len(args) >= 1:
-        #使用" ".join(args[1:])来代替原来的循环拼接字符串
+        #Use " ".join(args[1:]) to replace the original loop splicing string
         text = " ".join(args[0:])
     # If not, just say a sentence
     else:
@@ -50,11 +50,11 @@ def recognize_speech( rate=16000, chunk=1024, record_seconds=5):
 
     recognizer = DeepSpeechRecognizer(MODEL_FILE, SCORER_FILE, rate, chunk, record_seconds)
     try:
-        # 录制并识别
+        # Record and recognize
         text = recognizer.record_and_recognize()
         return text
     finally:
-        # 关闭资源
+        # Close resource
         recognizer.close()
 
 class FindTargat(smach.State):
@@ -98,11 +98,11 @@ class InitPosition(smach.State):
         # rospy.loginfo('Robot not succeeded to  Init Position')
         # return 'aborted'
 
-        # 等待5秒
+        # wait 5 seconds
         rospy.sleep(5)
 
-        # 检查某些条件，决定返回 'succeeded' 还是 'aborted'
-        if some_condition_is_true():  # 请替换为实际的条件判断逻辑
+        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
+        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
         else:
@@ -119,8 +119,8 @@ class BagDetection(smach.State):
 
         rospy.sleep(5)
 
-        # 检查某些条件，决定返回 'succeeded' 还是 'aborted'
-        if not some_condition_is_true():  # 请替换为实际的条件判断逻辑
+        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
+        if not some_condition_is_true():  # Please replace it with actual conditional judgment logic
             # Insert your bag detection logic here
             # If a bag is detected, return 'detected'
 
@@ -152,11 +152,11 @@ class BagGrasp(smach.State):
         response_something('Well, please let me grasp it')
         # moveit
 
-        # 定义目标位置和姿态
+        # Define target position and attitude
         position = [0.4, 0.0, 0.4]  # X, Y, Z
         orientation = [0, -0.7, 0]  # R, P, Y (以弧度表示)
 
-        # 移动手臂到指定位置
+        # Move the arm to the specified position
         self.arm_controller.move_arm(position, orientation)
 
         rospy.sleep(5)
@@ -183,7 +183,7 @@ class PeopleDetection(smach.State):
         rospy.loginfo('Executing state PeopleDetection')
         response_something('i just make sure you are you')
 
-## do the detection
+        ## do the detection
         rospy.sleep(5)
         # If a person is detected, return 'detected'
         if self.detect_person():
