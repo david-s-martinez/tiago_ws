@@ -44,49 +44,49 @@ class ArmController:
         # 清除目标姿态
         self.arm_group.clear_pose_targets()
 
-    def move_arm_joint_space(self, joint_goals):
-        print(len(self.arm_group.get_active_joints()))
-        # 创建JointState消息
-        joint_state = JointState()
-        joint_state.name = ['torso_lift_joint','arm_1_joint', 'arm_2_joint', 'arm_3_joint', 'arm_4_joint', 'arm_5_joint', 'arm_6_joint', 'arm_7_joint']
-        joint_state.position = joint_goals
+    # def move_arm_joint_space(self, joint_goals):
+    #     print(len(self.arm_group.get_active_joints()))
+    #     # 创建JointState消息
+    #     joint_state = JointState()
+    #     joint_state.name = ['torso_lift_joint','arm_1_joint', 'arm_2_joint', 'arm_3_joint', 'arm_4_joint', 'arm_5_joint', 'arm_6_joint', 'arm_7_joint']
+    #     joint_state.position = joint_goals
 
-        # 设置关节角度目标
-        self.arm_group.set_joint_value_target(joint_state)
+    #     # 设置关节角度目标
+    #     self.arm_group.set_joint_value_target(joint_state)
 
-        # 规划并执行
-        self.arm_group.go(wait=True)
+    #     # 规划并执行
+    #     self.arm_group.go(wait=True)
 
-        #清除目标
-        self.arm_group.clear_pose_targets()
+    #     #清除目标
+    #     self.arm_group.clear_pose_targets()
 
-    def set_target_from_rviz(self):
-        rospy.Subscriber("/goal", PoseStamped, self.callback_pose_goal)
-        #rospy.Subscriber("/interactive_marker_pose/update", PoseStamped, self.callback_pose_goal)
+    # def set_target_from_rviz(self):
+    #     rospy.Subscriber("/goal", PoseStamped, self.callback_pose_goal)
+    #     #rospy.Subscriber("/interactive_marker_pose/update", PoseStamped, self.callback_pose_goal)
 
-    def callback_pose_goal(self, msg):
-        # 设置目标姿态并规划运动
-        msg.header.stamp = rospy.Time.now()
-        self.arm_group.set_pose_target(msg)
-        self.arm_group.go(wait=True)
-        self.arm_group.clear_pose_targets()
+    # def callback_pose_goal(self, msg):
+    #     # 设置目标姿态并规划运动
+    #     msg.header.stamp = rospy.Time.now()
+    #     self.arm_group.set_pose_target(msg)
+    #     self.arm_group.go(wait=True)
+    #     self.arm_group.clear_pose_targets()
 
 def main():
     arm_controller = ArmController()
 
     # 定义目标位置和姿态
-    position = [0.4, 0.0, 0.4]  # X, Y, Z
+    position = [0.65, -0.3, 0.4]  # X, Y, Z
     orientation = [0, -0.7, 0]  # R, P, Y (以弧度表示)
 
     # 移动手臂到指定位置
-    #arm_controller.move_arm(position, orientation)
+    arm_controller.move_arm(position, orientation)
 
     # # 定义关节目标位置（根据您的机器人关节数量和名称进行调整）
     # joint_goals = [0.1,0.07, -0.5, -0.3, 2.13, -1.33, -0.43, -0.2] # 替换为适当的目标值
 
     # # 移动手臂到指定关节位置
     # arm_controller.move_arm_joint_space(joint_goals)
-    arm_controller.set_target_from_rviz()
+    # arm_controller.set_target_from_rviz()
     rospy.spin()
 
 
