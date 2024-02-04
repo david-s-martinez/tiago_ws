@@ -8,6 +8,20 @@ from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PointStamped
 import sys
 import numpy as np
+
+# change the delay to 25 secs in /opt/ros/noetic/lib/python3/dist-packages/moveit_commander/move_group.py:
+# class MoveGroupCommander(object):
+#     """
+#     Execution of simple commands for a particular group
+#     """
+
+#     def __init__(
+#         self, name, robot_description="robot_description", ns="", wait_for_servers=25.0
+#     ):
+#         """Specify the group name for which to construct this commander instance. Throws an exception if there is an initialization error."""
+#         self._g = _moveit_move_group_interface.MoveGroupInterface(
+#             name, robot_description, ns, wait_for_servers
+#         )
 class ArmController:
     def __init__(self):
         # Initialize MoveIt! Commander and ROS nodes
