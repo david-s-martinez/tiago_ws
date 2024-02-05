@@ -18,6 +18,21 @@ def move_arm():
     arm_pub.publish(arm_trajectory)
     rospy.loginfo("Arm command sent.")
 
+def move_head():
+    arm_pub = rospy.Publisher('/head_controller/command', JointTrajectory, queue_size=10)
+    rospy.sleep(1)
+
+    arm_trajectory = JointTrajectory()
+    arm_trajectory.joint_names = ['head_1_joint', 'head_2_joint']
+
+    arm_point = JointTrajectoryPoint()
+    arm_point.positions = [0.7, -0.8]
+    arm_point.time_from_start = rospy.Duration(1.0)
+    arm_trajectory.points.append(arm_point)
+
+    arm_pub.publish(arm_trajectory)
+    rospy.loginfo("Head command sent.")
+
 def move_gripper():
     gripper_pub = rospy.Publisher('/gripper_controller/command', JointTrajectory, queue_size=10)
     rospy.sleep(1)
@@ -51,6 +66,7 @@ def move_torso():
 if __name__ == '__main__':
     try:
         rospy.init_node('tiago_arm_and_gripper_mover', anonymous=True)
+        move_head()
         move_arm()
         move_gripper()
         move_torso()
