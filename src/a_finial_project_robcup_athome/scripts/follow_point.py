@@ -3,6 +3,7 @@ import rospy
 import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image, CameraInfo
+from std_msgs.msg import String
 from geometry_msgs.msg import PointStamped
 from control_msgs.msg import PointHeadAction, PointHeadGoal
 import actionlib
@@ -22,54 +23,71 @@ class LookToPoint:
         self.camera_intrinsics = None
         self.latest_image_stamp = None
         self.point_head_client = None
-
+        self.last_centroid = None
         # Create a point head action client
         self.create_point_head_client()
 
         # Subscribe to the image topic
         rospy.loginfo("Subscribing to " + self.image_topic + " ...")
         rospy.Subscriber(self.image_topic, Image, self.image_callback)
+        # Subscribe to the topic where the detections are being published
+        self.centroid_sub = rospy.Subscriber('/pick_centroid', String, self.centroid_callback, buff_size=1)
+
+    def centroid_callback(self, centroid_msg):
+        # rospy.sleep(0.5)
+        # Decode the centroid string into a list of floating point numbers
+        new_centroid = eval(centroid_msg.data)
+        print(type(new_centroid))
+        print(self.last_centroid, new_centroid)
+        self.last_centroid = new_centroid
+        if self.last_centroid is not None:
+            # Call the function to make the camera point to the centroid
+            self.point_to_centroid(self.last_centroid)
+
 
     # ROS callback for every new image received
     def image_callback(self, img_msg):
         self.latest_image_stamp = img_msg.header.stamp
 
         cv_img = CvBridge().imgmsg_to_cv2(img_msg, "bgr8")
+        if self.last_centroid != None:
+            cv2.circle(cv_img, tuple(self.last_centroid), radius=10, color=(0, 0, 255), thickness=-1)
         cv2.imshow(self.window_name, cv_img)
         cv2.setMouseCallback(self.window_name, self.on_mouse)
         cv2.waitKey(1)
-
-    # OpenCV callback function for mouse events on a window
-    def on_mouse(self, event, u, v, flags, param):
-        if event != cv2.EVENT_LBUTTONDOWN:
-            return
-
-        rospy.loginfo(f"Pixel selected ({u}, {v}) Making TIAGo look to that direction")
-
+        
+        # Function to make the camera point to the centroid
+    def point_to_centroid(self, centroid):
         point_stamped = PointStamped()
         point_stamped.header.frame_id = self.camera_frame
-        point_stamped.header.stamp = self.latest_image_stamp
+        point_stamped.header.stamp = rospy.Time.now()
 
-        # Compute normalized coordinates of the selected pixel
-        x = (u - self.camera_intrinsics[0, 2]) / self.camera_intrinsics[0, 0]
-        y = (v - self.camera_intrinsics[1, 2]) / self.camera_intrinsics[1, 1]
+        # Compute normalized coordinates of the centroid pixel
+        x = (centroid[0] - self.camera_intrinsics[0, 2]) / self.camera_intrinsics[0, 0]
+        y = (centroid[1] - self.camera_intrinsics[1, 2]) / self.camera_intrinsics[1, 1]
         Z = 1.0  # Define an arbitrary distance
+
         point_stamped.point.x = x * Z
         point_stamped.point.y = y * Z
         point_stamped.point.z = Z
 
-        # Build the action goal
         goal = PointHeadGoal()
         goal.pointing_frame = self.camera_frame
         goal.pointing_axis.x = 0.0
         goal.pointing_axis.y = 0.0
         goal.pointing_axis.z = 1.0
-        goal.min_duration = rospy.Duration(1.0)
-        goal.max_velocity = 0.25
+        goal.min_duration = rospy.Duration(0.5)
+        goal.max_velocity = 0.2
         goal.target = point_stamped
 
-        self.point_head_client.send_goal(goal)
-        rospy.sleep(0.5)
+        self.point_head_client.send_goal(goal,done_cb=print('Done Moving!'))
+
+    # OpenCV callback function for mouse events on a window
+    def on_mouse(self, event, u, v, flags, param):
+        if event != cv2.EVENT_LBUTTONDOWN:
+            return
+        rospy.loginfo(f"Pixel selected ({u}, {v}) Making TIAGo look to that direction")
+        self.point_to_centroid([u,v])
 
     # Create a ROS action client to move TIAGo's head
     def create_point_head_client(self):
