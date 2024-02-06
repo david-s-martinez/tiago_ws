@@ -85,6 +85,7 @@ def image_callback(ros_image):
                 cv2.putText(cv_image, str(i), (xPos-25, yPos+5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 2)
                 fingers_status = fingersUp(handLms, imgWidth, imgHeight)
                 print_direction(fingers_status, cv_image)
+                
                 # 构建手部标记点列表
                 lmList = []
                 for lm in handLms.landmark:
@@ -120,6 +121,7 @@ def print_direction(fingers_status, img):
         status_str = ', '.join(map(str, fingers_status))  # 将列表转换为字符串
         cv2.putText(img, f"{direction_text}: [{status_str}]", (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 3)
 
+    return direction_text
 
 if __name__ == '__main__':
     rospy.init_node('hand_tracking_node', anonymous=True)

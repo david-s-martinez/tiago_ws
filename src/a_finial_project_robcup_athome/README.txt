@@ -9,6 +9,9 @@ ssh pal@192.168.1.200
 
 source /opt/ros/noetic/setup.bash
 
+rosnode kill /dock_charge_sm
+
+
 export ROS_IP=192.168.1.109
 export ROS_MASTER_URI=http://192.168.1.200:11311
 

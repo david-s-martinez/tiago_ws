@@ -27,7 +27,7 @@ class ArmController:
         # Initialize MoveIt! Commander and ROS nodes
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.sleep(10)
-        rospy.init_node('tiago_arm_controller', anonymous=True)
+        #rospy.init_node('tiago_arm_controller', anonymous=True)
         rospy.Subscriber("/pick_point", PointStamped, self.point_callback)
 
         # Initialize the MoveGroupCommander object
@@ -72,7 +72,7 @@ class ArmController:
 
         # Clear target pose
         self.arm_group.clear_pose_targets()
-            
+        return True   
 
     # def transform_and_move(self,camera_point):
     def transform_and_move(self):
@@ -82,7 +82,7 @@ class ArmController:
         camera_point.point.x = self.pick_x
         camera_point.point.y = self.pick_y
         camera_point.point.z = self.pick_z
-        rospy.loginfo("Transformed Point: x=%f, y=%f, z=%f" % (camera_point.point.x, camera_point.point.y, camera_point.point.z))
+        # rospy.loginfo("Transformed Point: x=%f, y=%f, z=%f" % (camera_point.point.x, camera_point.point.y, camera_point.point.z))
         try:
             # Wait until the transform is available
             self.listener.waitForTransform("base_footprint", camera_point.header.frame_id, rospy.Time(0), rospy.Duration(4.0))
@@ -94,12 +94,14 @@ class ArmController:
                 rospy.loginfo("Transformed Point: x=%f, y=%f, z=%f" % (transformed_point.point.x, transformed_point.point.y, transformed_point.point.z))
 
                 # Define target position and attitude
-                position = [transformed_point.point.x, transformed_point.point.y, transformed_point.point.z+0.4]  # X, Y, Z
+                position = [transformed_point.point.x, transformed_point.point.y, transformed_point.point.z+0.43]  # X, Y, Z
 
                 orientation = [0, 1.6, 0]  # R, P, Y 
 
                 # Move the arm to the specified position
                 self.move_arm(position, orientation)
+                #rospy.sleep(3)
+                return self.move_arm(position, orientation)
 
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
             rospy.logerr("TF Transform Error: %s" % e)
