@@ -6,11 +6,11 @@ from geometry_msgs.msg import PoseStamped, PointStamped
 import math
 
 # Topic names and frame ids as constants for easy modification
-NODE_NAME = "get_target_point" # Name of the ROS node
-GOAL_SUBSCRIBE = "/goal_point" # Topic to subscribe to for the goal point from the camera
-GOAL_PUBLISH = "/human_goal" # Topic to publish the goal point to move_base
+NODE_NAME = "create_bag_goal" # Name of the ROS node
+GOAL_SUBSCRIBE = "/pick_point" # Topic to subscribe to for the goal point from the camera
+GOAL_PUBLISH = "/bag_goal" # Topic to publish the goal point to move_base
 CAMERA_FRAME_ID = "xtion_rgb_optical_frame" # Frame id of the camera
-MAP_FRAME_ID = "map" # Frame id of the map
+MAP_FRAME_ID = "map" 
 
 class GetTargetPoint:
     def __init__(self):
@@ -19,7 +19,8 @@ class GetTargetPoint:
         rospy.Subscriber(GOAL_SUBSCRIBE, PointStamped, self.point_callback)
         self.listener = tf.TransformListener()
         self.goal_pub = rospy.Publisher(GOAL_PUBLISH, PoseStamped, queue_size=2)
-        rospy.loginfo("GetTargetPoint node initialized")
+        rospy.loginfo("f{NODE_NAME} initialized")
+        
 
     def point_callback(self, msg):
         camera_point = geometry_msgs.msg.PointStamped()
@@ -40,9 +41,9 @@ class GetTargetPoint:
             goal_point = geometry_msgs.msg.PoseStamped()
             goal_point.header.frame_id = MAP_FRAME_ID
             goal_point.header.stamp = rospy.Time.now()
-            goal_point.pose.position.x = transformed_point.point.x
-            goal_point.pose.position.y = transformed_point.point.y - 0.5 * math.sin(math.atan2(transformed_point.point.y, transformed_point.point.x))
-            goal_point.pose.position.z = transformed_point.point.z
+            goal_point.pose.position.x = transformed_point.point.x - (0.3 + 0.3) * math.cos(math.atan2(transformed_point.point.y, transformed_point.point.x))
+            goal_point.pose.position.y = transformed_point.point.y + (0.3 + 0.3) * math.sin(math.atan2(transformed_point.point.y, transformed_point.point.x))
+            goal_point.pose.position.z = 0.0
             
             # Calculate orientation
             quaternion = tf.transformations.quaternion_from_euler(0, 0, math.atan2(transformed_point.point.y, transformed_point.point.x))
@@ -51,7 +52,7 @@ class GetTargetPoint:
             goal_point.pose.orientation.z = quaternion[2]
             goal_point.pose.orientation.w = quaternion[3]
             
-            rospy.loginfo("Publishing Goal point: x=%f, y=%f, z=%f" % (goal_point.pose.position.x, goal_point.pose.position.y, goal_point.pose.position.z))
+            # rospy.loginfo("Publishing Goal point: x=%f, y=%f, z=%f" % (goal_point.pose.position.x, goal_point.pose.position.y, goal_point.pose.position.z))
             self.goal_pub.publish(goal_point)
 
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
