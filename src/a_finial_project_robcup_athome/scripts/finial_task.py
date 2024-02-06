@@ -173,7 +173,7 @@ class BagDetection(smach.State):
 
     def detect_bag(self):
         # Implement your bag detection logic here
-        self.hand_direction = self.hand_detector.print_direction
+        self.hand_direction = self.hand_detector.direction_text
         if self.hand_direction == 'RIGHT':
             # 如果检测到右手，返回 True
             rospy.loginfo('Bag detected right')
@@ -193,7 +193,7 @@ class BagGrasp(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state BagGrasp')
         response_something('Well, please let me grasp it')
-
+        head_commdand = "Right"
         look_right = [0.7,-0.98]
         look_left = [-0.7,-0.98]
         open_gripper = [0.04,0.04]
@@ -201,7 +201,10 @@ class BagGrasp(smach.State):
         move_gripper(open_gripper)
 
         stop_event = threading.Event()
-        look_direction = look_right  # 或 look_left = [-0.7, -0.8]
+        if head_commdand == "Right":
+            look_direction = look_right  # 或 look_left = [-0.7, -0.8]
+        elif head_commdand == "Left":
+            look_direction = look_left
         head_thread = threading.Thread(target=self.continuous_move_head, args=(look_direction, stop_event))
         head_thread.start()
 
