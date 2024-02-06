@@ -124,7 +124,7 @@ class BagDetection(smach.State):
         smach.State.__init__(self, outcomes=['detected', 'not_detected'])
         self.hand_detector = HandDetector()  # 创建手部识别器实例
         self.hand_direction = "" # 存储手部方向的变量
-
+        global hand_command
     def execute(self, userdata):
         rospy.loginfo('Executing state BagDetection')
         response_something('Please, choose which bag i should carry')
@@ -139,6 +139,7 @@ class BagDetection(smach.State):
             rospy.loginfo('into while')
             self.detect_bag()
             print(self.hand_direction)
+
             if self.detect_bag():
                 #self.hand_direction = self.hand_detector.print_direction
                 response_something(f'I see, you want me to take the {self.hand_direction.lower()} one')
@@ -173,7 +174,8 @@ class BagDetection(smach.State):
 
     def detect_bag(self):
         # Implement your bag detection logic here
-        self.hand_direction = self.hand_detector.print_direction
+        self.hand_direction = self.hand_detector.direction_text
+        hand_command = self.hand_direction
         if self.hand_direction == 'RIGHT':
             # 如果检测到右手，返回 True
             rospy.loginfo('Bag detected right')
@@ -193,7 +195,7 @@ class BagGrasp(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state BagGrasp')
         response_something('Well, please let me grasp it')
-
+        #head_commdand = "Right"
         look_right = [0.7,-0.98]
         look_left = [-0.7,-0.98]
         open_gripper = [0.04,0.04]
@@ -201,7 +203,10 @@ class BagGrasp(smach.State):
         move_gripper(open_gripper)
 
         stop_event = threading.Event()
-        look_direction = look_right  # 或 look_left = [-0.7, -0.8]
+        if head_commdand == "Right":
+            look_direction = look_right  # 或 look_left = [-0.7, -0.8]
+        elif head_commdand == "Left":
+            look_direction = look_left
         head_thread = threading.Thread(target=self.continuous_move_head, args=(look_direction, stop_event))
         head_thread.start()
 
@@ -299,7 +304,9 @@ class PutDown(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state PutDown')
         response_something('Here, you are .')
-
+        end_position = [0.4, -1.17, -1.9, 2.3, -1.3, -0.45, 1.75]
+        move_arm(end_position)
+        rospy.sleep(10)
         response_something(' wish you have a good day')
         return 'succeeded'
 # main
