@@ -5,6 +5,9 @@
 
     <include file="$(find tiago_robocup_navigation)/launch/mapping_gmapping.launch"/>
 
+    <!-- Launch amcl -->
+    <!-- <include file="$(find tiago_robocup_navigation)/launch/localization_amcl.launch"/> -->
+
     <arg name="file" default="$(find tiago_robocup_navigation)/config/tiago_navigation_rviz.rviz"/>
     <node name="rviz" pkg="rviz" type="rviz"
             args="-d $(arg file)"/>

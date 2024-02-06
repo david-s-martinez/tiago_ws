@@ -12,6 +12,8 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
 class GetTargetPoint:
     def __init__(self):
+        # Initialize MoveIt! Commander and ROS nodes
+ 
         rospy.init_node('get_target_point', anonymous=True)
         rospy.Subscriber("/goal_point", PointStamped, self.point_callback)
         rospy.Subscriber("/robot_pose", PointStamped, self.pose_callback)
@@ -73,6 +75,7 @@ class GetTargetPoint:
                 
                 goal_point.pose.position.x = transformed_point.point.x
                 goal_point.pose.position.y = transformed_point.point.y
+                goal_point.pose.position.y = goal_point.pose.position.y - 0.5 * math.sin(math.atan2(transformed_point.point.y, transformed_point.point.x))
                 goal_point.pose.position.z = transformed_point.point.z
                 
                 quaternion = tf.transformations.quaternion_from_euler(0, 0, math.atan2(transformed_point.point.y, transformed_point.point.x))
@@ -82,19 +85,14 @@ class GetTargetPoint:
                 goal_point.pose.orientation.w = quaternion[3]
                 rospy.loginfo("Goal point: x=%f, y=%f, z=%f" % (goal_point.pose.position.x, goal_point.pose.position.y, goal_point.pose.position.z))
                 
+                # Make the goal point 30 cm in front of the detected point
+                # goal_point.pose.position.x = goal_point.pose.position.x + 0.5 * math.cos(math.atan2(transformed_point.point.y, transformed_point.point.x))
+                
+                
+                
             else:
                 # subscribe to robot's current position
-                goal_point.pose.position.x = self.robot_x
-                goal_point.pose.position.y = self.robot_y
-                goal_point.pose.position.z = self.robot_z
-                
-                quaternion = self.robot_o
-                
-                goal_point.pose.orientation.x = quaternion[0]
-                goal_point.pose.orientation.y = quaternion[1]
-                goal_point.pose.orientation.z = quaternion[2]
-                goal_point.pose.orientation.w = quaternion[3]
-                rospy.loginfo("No target point detected. Stay at current position")
+                rospy.loginfo("Human Not Found")
                 
             self.goal_pub = rospy.Publisher('/human_goal', PoseStamped, queue_size=4)
             self.goal_pub.publish(goal_point)
