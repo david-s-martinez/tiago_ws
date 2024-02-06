@@ -24,6 +24,11 @@ class LookToPoint:
         self.latest_image_stamp = None
         self.point_head_client = None
         self.last_centroid = None
+        self.rect_width = 200  # Adjust according to your requirements
+        self.rect_height = 200  # Adjust according to your requirements
+        self.img_dims = (480,640,3)
+        self.image_center_x = int(self.img_dims[1]/2)
+        self.image_center_y = int(self.img_dims[0]/2)
         # Create a point head action client
         self.create_point_head_client()
 
@@ -50,37 +55,59 @@ class LookToPoint:
         self.latest_image_stamp = img_msg.header.stamp
 
         cv_img = CvBridge().imgmsg_to_cv2(img_msg, "bgr8")
+        self.img_dims = cv_img.shape
         if self.last_centroid != None:
             cv2.circle(cv_img, tuple(self.last_centroid), radius=10, color=(0, 0, 255), thickness=-1)
+        rect_top_left = (self.image_center_x - self.rect_width // 2, self.image_center_y - self.rect_height // 2)
+        rect_bottom_right = (self.image_center_x + self.rect_width // 2, self.image_center_y + self.rect_height // 2)
+        cv2.rectangle(cv_img, rect_top_left, rect_bottom_right, (0, 255, 0), thickness=2)
         cv2.imshow(self.window_name, cv_img)
         cv2.setMouseCallback(self.window_name, self.on_mouse)
-        cv2.waitKey(1)
+        key = cv2.waitKey(1)
+        if key == 27:
+            rospy.signal_shutdown('User requested shutdown')
         
         # Function to make the camera point to the centroid
     def point_to_centroid(self, centroid):
-        point_stamped = PointStamped()
-        point_stamped.header.frame_id = self.camera_frame
-        point_stamped.header.stamp = rospy.Time.now()
+        # Define the dimensions of the rectangle (width and height)
+        
+        # Define the center of the image frame
+        image_center_x = self.img_dims[1]/2
+        image_center_y = self.img_dims[0]/2
 
-        # Compute normalized coordinates of the centroid pixel
-        x = (centroid[0] - self.camera_intrinsics[0, 2]) / self.camera_intrinsics[0, 0]
-        y = (centroid[1] - self.camera_intrinsics[1, 2]) / self.camera_intrinsics[1, 1]
-        Z = 1.0  # Define an arbitrary distance
+        # Compute the boundaries of the rectangle
+        rect_left = image_center_x - self.rect_width / 2
+        rect_right = image_center_x + self.rect_width / 2
+        rect_top = image_center_y - self.rect_height / 2
+        rect_bottom = image_center_y + self.rect_height / 2
 
-        point_stamped.point.x = x * Z
-        point_stamped.point.y = y * Z
-        point_stamped.point.z = Z
+        # Check if the centroid falls within the rectangle
+        if not(rect_left <= centroid[0] <= rect_right and rect_top <= centroid[1] <= rect_bottom):
+            point_stamped = PointStamped()
+            point_stamped.header.frame_id = self.camera_frame
+            point_stamped.header.stamp = rospy.Time.now()
 
-        goal = PointHeadGoal()
-        goal.pointing_frame = self.camera_frame
-        goal.pointing_axis.x = 0.0
-        goal.pointing_axis.y = 0.0
-        goal.pointing_axis.z = 1.0
-        goal.min_duration = rospy.Duration(0.5)
-        goal.max_velocity = 0.2
-        goal.target = point_stamped
+            # Compute normalized coordinates of the centroid pixel
+            x = (centroid[0] - self.camera_intrinsics[0, 2]) / self.camera_intrinsics[0, 0]
+            y = (centroid[1] - self.camera_intrinsics[1, 2]) / self.camera_intrinsics[1, 1]
+            Z = 1.0  # Define an arbitrary distance
 
-        self.point_head_client.send_goal(goal,done_cb=print('Done Moving!'))
+            point_stamped.point.x = x * Z
+            point_stamped.point.y = y * Z
+            point_stamped.point.z = Z
+
+            goal = PointHeadGoal()
+            goal.pointing_frame = self.camera_frame
+            goal.pointing_axis.x = 0.0
+            goal.pointing_axis.y = 0.0
+            goal.pointing_axis.z = 1.0
+            goal.min_duration = rospy.Duration(0.5)
+            goal.max_velocity = 0.1
+            goal.target = point_stamped
+
+            self.point_head_client.send_goal(goal, done_cb=lambda state: rospy.loginfo('Done Moving!'))
+        else:
+            rospy.loginfo("Centroid is outside the predefined rectangle. Skipping goal.")
 
     # OpenCV callback function for mouse events on a window
     def on_mouse(self, event, u, v, flags, param):
