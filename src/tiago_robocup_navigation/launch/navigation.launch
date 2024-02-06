@@ -1,0 +1,11 @@
+<!-- FILEPATH: /tiago_public_ws/src/tiago_robocup_navigation/launch/navigation.launch -->
+
+<launch>
+    <!-- Launch gmapping -->
+
+    <include file="$(find tiago_robocup_navigation)/launch/mapping_gmapping.launch"/>
+
+    <arg name="file" default="$(find tiago_robocup_navigation)/config/tiago_navigation_rviz.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz"
+            args="-d $(arg file)"/>
+</launch>
