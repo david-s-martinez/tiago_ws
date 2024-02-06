@@ -20,12 +20,14 @@ class LookToPoint:
         self.camera_frame = "/xtion_rgb_optical_frame"
         self.image_topic = "/xtion/rgb/image_raw"
         self.camera_info_topic = "/xtion/rgb/camera_info"
+        # self.centroid_goal_topic = '/pick_centroid'
+        self.centroid_goal_topic = '/goal_centroid'
         self.camera_intrinsics = None
         self.latest_image_stamp = None
         self.point_head_client = None
         self.last_centroid = None
         self.rect_width = 200  # Adjust according to your requirements
-        self.rect_height = 200  # Adjust according to your requirements
+        self.rect_height = 150  # Adjust according to your requirements
         self.img_dims = (480,640,3)
         self.image_center_x = int(self.img_dims[1]/2)
         self.image_center_y = int(self.img_dims[0]/2)
@@ -36,7 +38,7 @@ class LookToPoint:
         rospy.loginfo("Subscribing to " + self.image_topic + " ...")
         rospy.Subscriber(self.image_topic, Image, self.image_callback)
         # Subscribe to the topic where the detections are being published
-        self.centroid_sub = rospy.Subscriber('/pick_centroid', String, self.centroid_callback, buff_size=1)
+        self.centroid_sub = rospy.Subscriber(self.centroid_goal_topic, String, self.centroid_callback, buff_size=1)
 
     def centroid_callback(self, centroid_msg):
         # rospy.sleep(0.5)
@@ -102,7 +104,7 @@ class LookToPoint:
             goal.pointing_axis.y = 0.0
             goal.pointing_axis.z = 1.0
             goal.min_duration = rospy.Duration(0.5)
-            goal.max_velocity = 0.1
+            goal.max_velocity = 0.07
             goal.target = point_stamped
 
             self.point_head_client.send_goal(goal, done_cb=lambda state: rospy.loginfo('Done Moving!'))
