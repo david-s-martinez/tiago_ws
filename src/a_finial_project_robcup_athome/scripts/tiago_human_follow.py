@@ -21,8 +21,9 @@ class HumanFollow:
         self.goal_ori = None
         self.goal_init = False
         self.replanning_attempts = 0
-        self.max_replanning_attempts = 3
+        self.max_replanning_attempts = 1
         self.status = ""
+        self.arm_raised = False
 
         rospy.init_node(NODE_NAME, anonymous=True)
         self.client = actionlib.SimpleActionClient(MOVE_BASE_ACTION_SERVER, MoveBaseAction)
@@ -31,17 +32,16 @@ class HumanFollow:
         rospy.Subscriber("/move_base/result", MoveBaseActionResult, self.status_callback)
         self.goal_sub = rospy.Subscriber(GOAL_TOPIC, PoseStamped, self.pose_callback)
         self.human_status = rospy.Publisher(FOLLOW_STATUS, String, queue_size=1)
-        
-        self.finish_sub = rospy.Subscriber("/human_finish", String, self.navigation_callback)
+        self.arm_dection_sub = rospy.Subscriber('/arm_status', String, self.arm_status_callback)
         
         self.listener = tf.TransformListener()
         rospy.loginfo("f{NODE_NAME} initialized")
         
-    def navigation_callback(self, msg):
-        if msg.data == "finish":
-            self.cancel_goal()
-            rospy.loginfo("Navigation finished")
-            rospy.signal_shutdown("Complete")
+    def arm_status_callback(self, msg):
+        self.arm_raised = msg.data
+        if self.arm_raised is not None:
+            rospy.loginfo("Arm raised detected, stopping and finishing navigation.")
+            rospy.signal_shutdown("Navigation finished due to arm raised signal.")
 
     def pose_callback(self, msg):
         self.goal_pose = msg.pose.position

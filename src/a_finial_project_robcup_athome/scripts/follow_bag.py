@@ -9,10 +9,10 @@ from control_msgs.msg import PointHeadAction, PointHeadGoal
 import actionlib
 import numpy as np
 
-class LookToPoint:
+class LookToBag:
     def __init__(self):
         # Initialize ROS node
-        rospy.init_node("look_to_point")
+        rospy.init_node("look_to_bag")
         rospy.loginfo("Starting look_to_point application ...")
 
         # Global variables
@@ -44,9 +44,8 @@ class LookToPoint:
     def finish_callback(self, msg):
         self.finish = msg.data
         if self.finish == "Success":
-            self.finish_node = True
-        else:
-            self.finish_node = False
+            rospy.signal_shutdown("Complete")
+
 
     def centroid_callback(self, centroid_msg):
         # rospy.sleep(0.5)
@@ -151,9 +150,8 @@ class LookToPoint:
         # Destroy the OpenCV window
         cv2.destroyWindow(self.window_name)
 
-        if self.finish_node:
-            rospy.signal_shutdown("Complete")
+        
 
 if __name__ == '__main__':
-    look_to_point = LookToPoint()
+    look_to_point = LookToBag()
     look_to_point.run()

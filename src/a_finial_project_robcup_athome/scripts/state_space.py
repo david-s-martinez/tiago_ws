@@ -20,7 +20,6 @@ from create_goal import GetTargetPoint
 from geometry_msgs.msg import PoseStamped, PointStamped
 from std_msgs.msg import Header, String
 from tiago_bag_follow import BagFollow
-#from follow_point import LookToPoint 
 import subprocess
 from smach import State
 
@@ -46,7 +45,7 @@ def response_something(args):
     client = SimpleActionClient('/tts', TtsAction)
     client.wait_for_server()
     
-    # Create a goal to say our sentence
+    # # Create a goal to say our sentence
     goal = TtsGoal()
     goal.rawtext.text = text
     goal.rawtext.lang_id = "en_GB"
@@ -236,8 +235,7 @@ class Find_Bag(smach.State):
         self.bag_direction_sub = rospy.Subscriber("/arm_status", String, self.detect_direction_callback)
         self.attempt = 0
         self.bag_look_direction = None
-        self.move_pose = [0.7,-0.98]
-        #self.LookToPoint = LookToPoint()
+        self.move_pose = [0.6,-0.95]
         
     def detect_bag_callback(self, msg):
         self.bag_goal = msg.data
@@ -268,7 +266,6 @@ class Find_Bag(smach.State):
         if self.bag_direction is not None:
             response_something("I am looking for the bag on the %s side" % self.bag_direction)      
         self.move_head()
-        #self.LookToPoint
         while not self.bag_found:
             if self.attempt > 3:
                 return False
@@ -326,9 +323,14 @@ class BagGrasp(smach.State):
         self.open_gripper = [0.04,0.04]
         self.close_gripper = [0.0,0.0]
         self.squat_up = 0.3
-        self.squat_down = 0.13
+        self.squat_down = 0.09
         # self.stop_event = threading.Event()
         self.arm_style = None
+        self.EndPosition_arm = [0.07, -1.00, -0.93, 1.89, -0.71, -1.11, 1.33]
+        self.InitPosition_head = [0,0]
+        self.InitPosition_torso = 0.2
+        self.InitPosition_gripper = [0,0]
+
 
     # def move_head_continuously(self, direction):
     #     if direction == "right":
@@ -354,7 +356,7 @@ class BagGrasp(smach.State):
                 attempt += 1
                 rospy.sleep(2)  # Wait for 2 seconds before retrying
         return arm_moved_successfully
-
+    
     def execute(self, userdata):
         rospy.loginfo('Executing state BagGrasp')
 
@@ -365,11 +367,16 @@ class BagGrasp(smach.State):
         if self.grasp_bag():
             rospy.loginfo('Robot succeeded to grasp the bag')
             result = 'succeeded'
+            rospy.sleep(3)
             move_torso(self.squat_down)
             rospy.sleep(5)
             move_gripper(self.close_gripper)
             rospy.sleep(3)
             move_torso(self.squat_up)
+            rospy.sleep(3)
+            move_arm(self.EndPosition_arm)
+            rospy.sleep(2)
+            response_something("i have already got it ")
         else:
             rospy.loginfo('Robot failed to grasp the bag')
             result = 'aborted'
@@ -378,8 +385,10 @@ class BagGrasp(smach.State):
 class Look_Human(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+        self.InitPosition_head = [0,0]
 
     def execute(self, userdata):
+        move_head(self.InitPosition_head)
         rospy.loginfo('Executing state InitPosition')
         # Initialization logic her
 
@@ -409,9 +418,13 @@ class Move_to_Human(smach.State):
 class PutDown(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded'])
-
+        self.end_position = [0.4, -1.17, -1.9, 2.3, -1.3, -0.45, 1.75]
     def execute(self, userdata):
+        response_something('Here, you are .')
         
+        move_arm(self.end_position)
+        rospy.sleep(10)
+        response_something(' wish you have a good day')
         return 'succeeded'
     
 class ReturntoHome(smach.State):
@@ -500,6 +513,7 @@ def main():
                            transitions={'succeeded':'succeeded'
                                         # ,'aborted':'aborted'
                                         })
+        smach.StateMachine.add("ReturntoHome", ReturntoHome(), transitions={'succeeded':'succeeded'})
 
         # Add states to the container and define the trasitions
         # Navigate to user defined waypoint with callback

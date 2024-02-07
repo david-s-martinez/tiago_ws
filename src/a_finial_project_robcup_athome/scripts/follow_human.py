@@ -9,10 +9,10 @@ from control_msgs.msg import PointHeadAction, PointHeadGoal
 import actionlib
 import numpy as np
 
-class LookToPoint:
+class LooktoHuman:
     def __init__(self):
         # Initialize ROS node
-        rospy.init_node("look_to_point")
+        rospy.init_node("look_to_human")
         rospy.loginfo("Starting look_to_point application ...")
 
         # Global variables
@@ -37,16 +37,14 @@ class LookToPoint:
         # Subscribe to the image topic
         rospy.loginfo("Subscribing to " + self.image_topic + " ...")
         rospy.Subscriber(self.image_topic, Image, self.image_callback)
-        rospy.Subscriber('/bag_status', String, self.finish_callback)
+        rospy.Subscriber('/human_status', String, self.finish_callback)
         # Subscribe to the topic where the detections are being published
         self.centroid_sub = rospy.Subscriber(self.centroid_goal_topic, String, self.centroid_callback, buff_size=1)
 
     def finish_callback(self, msg):
         self.finish = msg.data
         if self.finish == "Success":
-            self.finish_node = True
-        else:
-            self.finish_node = False
+            rospy.signal_shutdown("Complete")
 
     def centroid_callback(self, centroid_msg):
         # rospy.sleep(0.5)
@@ -155,5 +153,5 @@ class LookToPoint:
             rospy.signal_shutdown("Complete")
 
 if __name__ == '__main__':
-    look_to_point = LookToPoint()
+    look_to_point = LooktoHuman()
     look_to_point.run()

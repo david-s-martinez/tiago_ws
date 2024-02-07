@@ -3,8 +3,8 @@
   <!-- Set the param that trajectory_execution_manager needs to find the controller plugin -->
   <node name="tiago_human_follow" type="tiago_human_follow.py" pkg="a_finial_project_robcup_athome" output="screen" />
 
-  <node name="follow_human" type="follow_human.py" pkg="a_finial_project_robcup_athome" output="screen" />
+  <!-- <node name="follow_human" type="follow_human.py" pkg="a_finial_project_robcup_athome" output="screen" /> -->
 
-  <node name="final_goal" type="final_goal.py" pkg="a_finial_project_robcup_athome" output="screen" />
+  <!-- <node name="final_goal" type="final_goal.py" pkg="a_finial_project_robcup_athome" output="screen" /> -->
 
 </launch>
