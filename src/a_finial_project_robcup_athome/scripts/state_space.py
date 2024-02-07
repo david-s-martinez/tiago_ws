@@ -98,6 +98,34 @@ class Find_Human(smach.State):
             rospy.loginfo('Robot not succeeded to Init Position')
             return 'aborted'
         
+class Remind_People_to_come(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state InitPosition')
+        # Initialization logic her
+
+        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
+        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
+            rospy.loginfo('Robot succeeded to Init Position')
+            return 'succeeded'
+
+        
+class Remind_People_to_come_2(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state InitPosition')
+        # Initialization logic her
+
+        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
+        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
+            rospy.loginfo('Robot succeeded to Init Position')
+            return 'succeeded'
+       
+
 class Arm_Dection(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
@@ -145,7 +173,22 @@ class Move_to_Bag(smach.State):
         else:
             rospy.loginfo('Robot not succeeded to Init Position')
             return 'aborted'
-    
+  
+class Bag_Helper(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state InitPosition')
+        # Initialization logic her
+
+        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
+        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
+            rospy.loginfo('Robot succeeded to Init Position')
+            return 'succeeded'
+        else:
+            rospy.loginfo('Robot not succeeded to Init Position')
+            return 'aborted'
 class BagGrasp(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
@@ -243,25 +286,33 @@ def main():
                                             'aborted':'aborted'})
         smach.StateMachine.add('Find_Human', Find_Human(), 
                                transitions={'succeeded':'Arm_Dection',
-                                            'aborted':'aborted'})
+                                            'aborted':'Remind_People_to_come'})
+        smach.StateMachine.add('Remind_People_to_come', Remind_People_to_come(), 
+                               transitions={'succeeded':'Find_Human'})
+        
         smach.StateMachine.add('Arm_Dection', Arm_Dection(), 
                                transitions={'succeeded':'Find_Bag',
-                                            'aborted':'aborted'})
+                                            'aborted':'Find_Human'})
         smach.StateMachine.add('Find_Bag', Find_Bag(), 
                                transitions={'succeeded':'Move_to_Bag',
                                             'aborted':'aborted'})
         smach.StateMachine.add('Move_to_Bag', Move_to_Bag(), 
                                transitions={'succeeded':'BagGrasp',
-                                            'aborted':'aborted'})
+                                            'aborted':'Bag_Helper'})
+        smach.StateMachine.add('Bag_Helper', Bag_Helper(), 
+                               transitions={'succeeded':'Find_Bag',
+                                            'aborted':'aborted'})       
         smach.StateMachine.add('BagGrasp', BagGrasp(), 
                                transitions={'succeeded':'Look_Human',
                                             'aborted':'aborted'})
         smach.StateMachine.add('Look_Human', Look_Human(), 
                                transitions={'succeeded':'Move_to_Human',
-                                            'aborted':'aborted'})
+                                            'aborted':'Remind_People_to_come_2'})
+        smach.StateMachine.add('Remind_People_to_come_2', Remind_People_to_come_2(), 
+                               transitions={'succeeded':'Look_Human'})
         smach.StateMachine.add('Move_to_Human', Move_to_Human(), 
                                transitions={'succeeded':'PUT_DOWN',
-                                            'aborted':'aborted'})
+                                            'aborted':'Look_Human'})
         smach.StateMachine.add('PUT_DOWN', PutDown(), 
                            transitions={'succeeded':'succeeded'
                                         # ,'aborted':'aborted'
