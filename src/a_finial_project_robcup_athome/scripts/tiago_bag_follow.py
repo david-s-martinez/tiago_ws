@@ -9,7 +9,6 @@ from std_msgs.msg import String
 # Constants for topic names and frame ids
 NODE_NAME = "bag_follow"
 GOAL_TOPIC = "/bag_goal"
-ROBOT_POSE_TOPIC = "/robot_pose"
 MOVE_BASE_ACTION_SERVER = "move_base"
 MAP_FRAME_ID = "map"
 BASE_FOOTPRINT_FRAME_ID = "base_footprint"
@@ -30,7 +29,6 @@ class BagFollow:
         self.client = actionlib.SimpleActionClient(MOVE_BASE_ACTION_SERVER, MoveBaseAction)
         self.client.wait_for_server()
         
-        rospy.Subscriber(ROBOT_POSE_TOPIC, PoseStamped, self.robot_pose_callback)
         self.goal_sub = rospy.Subscriber(GOAL_TOPIC, PoseStamped, self.pose_callback)
         rospy.Subscriber("/move_base/result", MoveBaseActionResult, self.status_callback) 
         
@@ -42,11 +40,6 @@ class BagFollow:
         self.goal_pose = msg.pose.position
         self.goal_ori = msg.pose.orientation
         self.replanning_attempts = 0
-        self.create_goal_path()
-        
-    def robot_pose_callback(self, msg):
-        self.robot_pose = msg.pose.position
-        self.robot_ori = msg.pose.orientation
         self.create_goal_path()
 
     # create a status publisher to publish the status of the robot
@@ -64,7 +57,6 @@ class BagFollow:
             goal.target_pose.header.frame_id = MAP_FRAME_ID
             goal.target_pose.header.stamp = rospy.Time.now()
             goal.target_pose.pose.position = self.goal_pose
-            # goal.target_pose.pose.orientation = self.robot_ori
             goal.target_pose.pose.orientation = self.goal_ori
             self.client.send_goal(goal)
             rospy.loginfo("Goal point sent to move_base")
