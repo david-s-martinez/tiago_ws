@@ -157,8 +157,6 @@ class Remind_People_to_come_2(smach.State):
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
 
-       
-
 class Arm_Dection(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
@@ -296,8 +294,7 @@ class Move_to_Bag(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state MovetoBag')
         try:
-            subprocess.call(['rosrun', 'a_finial_project_robcup_athome', 'tiago_bag_follow.py'])
-            subprocess.call(['rosrun', "a_finial_project_robcup_athome", 'follow_point.py'])
+            subprocess.call(['roslaunch', 'a_finial_project_robcup_athome', 'follow_bag.launch'])
             rospy.loginfo('Robot succeeded to MovetoBag')
             return 'succeeded'
         except:
