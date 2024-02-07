@@ -18,3 +18,13 @@ class FindHuman(smach.State):
                 rospy.sleep(1)
                 continue
         return True
+    
+    def execute(self, userdata):
+        rospy.loginfo('Executing state FindHuman')
+
+        if self.FindHuman(): 
+            rospy.loginfo('Robot succeeded to Find Human')
+            return 'succeeded'
+        else:
+            rospy.loginfo('Robot not succeeded to Find Human')
+            return 'aborted'
