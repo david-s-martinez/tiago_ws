@@ -12,7 +12,7 @@ import numpy as np
 class LookToPoint:
     def __init__(self):
         # Initialize ROS node
-        #rospy.init_node("look_to_point")
+        rospy.init_node("look_to_point")
         rospy.loginfo("Starting look_to_point application ...")
 
         # Global variables
@@ -20,8 +20,8 @@ class LookToPoint:
         self.camera_frame = "/xtion_rgb_optical_frame"
         self.image_topic = "/xtion/rgb/image_raw"
         self.camera_info_topic = "/xtion/rgb/camera_info"
-        self.centroid_goal_topic = '/pick_centroid'
-        #self.centroid_goal_topic = '/goal_centroid'
+        # self.centroid_goal_topic = '/pick_centroid'
+        self.centroid_goal_topic = '/goal_centroid'
         self.camera_intrinsics = None
         self.latest_image_stamp = None
         self.point_head_client = None

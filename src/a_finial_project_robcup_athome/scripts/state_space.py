@@ -394,7 +394,7 @@ class Look_Human(smach.State):
 class Move_to_Human(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
-        self.finish_navigation = rospy.Publsiher("/human_finish", String, queue_size = 1)
+        self.finish_navigation = rospy.Publisher("/human_finish", String, queue_size = 1)
         self.finish_navigation.publish("Not at Goal")
 
     def execute(self, userdata):
