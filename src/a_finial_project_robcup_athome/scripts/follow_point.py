@@ -12,7 +12,7 @@ import numpy as np
 class LookToPoint:
     def __init__(self):
         # Initialize ROS node
-        rospy.init_node("look_to_point")
+        #rospy.init_node("look_to_point")
         rospy.loginfo("Starting look_to_point application ...")
 
         # Global variables
@@ -44,8 +44,8 @@ class LookToPoint:
         # rospy.sleep(0.5)
         # Decode the centroid string into a list of floating point numbers
         new_centroid = eval(centroid_msg.data)
-        print(type(new_centroid))
-        print(self.last_centroid, new_centroid)
+        #print(type(new_centroid))
+        #print(self.last_centroid, new_centroid)
         self.last_centroid = new_centroid
         if self.last_centroid is not None:
             # Call the function to make the camera point to the centroid

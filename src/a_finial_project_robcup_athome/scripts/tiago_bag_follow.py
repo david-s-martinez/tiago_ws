@@ -15,6 +15,7 @@ MAP_FRAME_ID = "map"
 BASE_FOOTPRINT_FRAME_ID = "base_footprint"
 FOLLOW_STATUS = "/bag_status"
 
+
 class BagFollow:
     def __init__(self):
         self.goal_pose = None
@@ -23,14 +24,14 @@ class BagFollow:
         self.robot_ori = None
         self.replanning_attempts = 0
         self.max_replanning_attempts = 1
+        self.status = ""
 
         rospy.init_node(NODE_NAME, anonymous=True)
         self.client = actionlib.SimpleActionClient(MOVE_BASE_ACTION_SERVER, MoveBaseAction)
         self.client.wait_for_server()
         
         rospy.Subscriber(ROBOT_POSE_TOPIC, PoseStamped, self.robot_pose_callback)
-
-        rospy.Subscriber(GOAL_TOPIC, PoseStamped, self.pose_callback)
+        self.goal_sub = rospy.Subscriber(GOAL_TOPIC, PoseStamped, self.pose_callback)
         rospy.Subscriber("/move_base/result", MoveBaseActionResult, self.status_callback) 
         
         self.listener = tf.TransformListener()
@@ -50,15 +51,8 @@ class BagFollow:
 
     # create a status publisher to publish the status of the robot
     def status_callback(self, msg):
-        if msg.status.status == actionlib.GoalStatus.ABORTED:
-            self.replanning_attempts += 1
-            rospy.loginfo("Replanning attempt: %d" % self.replanning_attempts)
-            if self.replanning_attempts >= self.max_replanning_attempts:
-                self.cancel_goal()
-                self.bag_status.publish(String("Failed"))
-                rospy.loginfo("Goal aborted, replanning attempts exceeded")
-        if msg.status.status == actionlib.GoalStatus.SUCCEEDED:
-            self.bag_status.publish(String("Success"))
+        self.status = msg.status.status
+        
         
     def cancel_goal(self):
         self.client.cancel_all_goals()
@@ -75,6 +69,14 @@ class BagFollow:
             self.client.send_goal(goal)
             rospy.loginfo("Goal point sent to move_base")
             self.client.wait_for_result()
+
+            if self.status == actionlib.GoalStatus.SUCCEEDED:
+                self.bag_status.publish(String("Success"))
+                rospy.signal_shutdown("Complete")
+
+            else:
+                self.cancel_goal()          
+            
         except Exception as e:
             rospy.logerr("Error in sending goal point to move_base: %s" % e)
 

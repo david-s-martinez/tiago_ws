@@ -16,9 +16,13 @@ from tf_grasp import ArmController
 import threading
 from hands_command import HandDetector
 from create_goal import GetTargetPoint
-from tiago_human_follow import HumanFollow
+#from tiago_human_follow import HumanFollow
 from geometry_msgs.msg import PoseStamped, PointStamped
 from std_msgs.msg import Header, String
+from tiago_bag_follow import BagFollow
+#from follow_point import LookToPoint 
+import subprocess
+from smach import State
 
 # define states
 def some_condition_is_true():
@@ -67,15 +71,25 @@ def recognize_speech( rate=16000, chunk=1024, record_seconds=5):
 class InitPosition(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+        self.InitPosition_arm = [0.2, -1.34, -0.2, 1.94, -1.57, 1.37, 0.0]
+        self.InitPosition_head = [0,0]
+        self.InitPosition_torso = 0.2
+        self.InitPosition_gripper = [0,0]
+
+    def InitialPosition(self):
+        response_something('Hello, I am here to help you')
+        move_head(self.InitPosition_head)
+        move_arm(self.InitPosition_arm)
+        move_gripper(self.InitPosition_gripper)
+        move_torso(self.InitPosition_torso)
+        return True
 
     def execute(self, userdata):
         rospy.loginfo('Executing state InitPosition')
         # Initialization logic here
-        rospy.loginfo('saying')
-        
 
         # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
+        if self.InitialPosition():  # Please replace it with actual conditional judgment logic
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
         else:
@@ -85,27 +99,44 @@ class InitPosition(smach.State):
 class Find_Human(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
-
+        self.find_human_sub = rospy.Subscriber('/goal_centroid', String, self.find_human_callback)
+        self.human_goal = None
+        self.attempt = 0
+        
+    def find_human_callback(self, msg):
+        self.human_goal = msg.data
+        
+    def FindHuman(self):
+        while self.human_goal is None:
+            if self.attempt > 3:
+                return False
+            else:
+                # say something
+                response_something('please stand in front of me ')
+                self.attempt += 1
+                rospy.sleep(5)
+                continue
+        return True
+    
     def execute(self, userdata):
-        rospy.loginfo('Executing state InitPosition')
-        # Initialization logic her
+        rospy.loginfo('Executing state FindHuman')
 
-        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
-            rospy.loginfo('Robot succeeded to Init Position')
+        if self.FindHuman(): 
+            rospy.loginfo('Robot succeeded to Find Human')
             return 'succeeded'
         else:
-            rospy.loginfo('Robot not succeeded to Init Position')
+            rospy.loginfo('Robot not succeeded to Find Human')
             return 'aborted'
         
 class Remind_People_to_come(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+        smach.State.__init__(self, outcomes=['succeeded'])
 
     def execute(self, userdata):
         rospy.loginfo('Executing state InitPosition')
         # Initialization logic her
-
+        response_something('i give you five seconds to let me see you  ')
+        rospy.sleep(5)
         # Check some conditions to decide whether to return 'succeeded' or 'aborted'
         if some_condition_is_true():  # Please replace it with actual conditional judgment logic
             rospy.loginfo('Robot succeeded to Init Position')
@@ -114,66 +145,165 @@ class Remind_People_to_come(smach.State):
         
 class Remind_People_to_come_2(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+        smach.State.__init__(self, outcomes=['succeeded'])
 
     def execute(self, userdata):
         rospy.loginfo('Executing state InitPosition')
         # Initialization logic her
-
+        response_something('i give you five seconds to let me see you  ')
+        rospy.sleep(5)
         # Check some conditions to decide whether to return 'succeeded' or 'aborted'
         if some_condition_is_true():  # Please replace it with actual conditional judgment logic
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
+
        
 
 class Arm_Dection(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+        self.arm_dection_sub = rospy.Subscriber('/arm_status', String, self.arm_dection_callback)
+        self.arm_style = None
+        self.attempt = 0
+        
+    def arm_dection_callback(self, msg):
+        self.arm_style = msg.data
+        
+    def arm_dection(self):
+        while True:
+            if self.attempt > 5:
+                return False
+            else:
+                if self.arm_style in ['right', 'left']:
+                    response_something(f'I see, you want me to take the {self.arm_style.lower()} one')
+                    rospy.loginfo(f'arm detected {self.arm_style.lower()}')
+                    rospy.sleep(5)
+                    return True
+                else:
+                    # say something
+                    response_something('please rise your arm to choose, which bag i should carry ')
+                    self.attempt += 1
+                    rospy.sleep(5)
+
 
     def execute(self, userdata):
-        rospy.loginfo('Executing state InitPosition')
+        rospy.loginfo('Executing state arm_dection')
         # Initialization logic her
 
         # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
-            rospy.loginfo('Robot succeeded to Init Position')
+        if self.arm_dection():  # Please replace it with actual conditional judgment logic
+            rospy.loginfo('Robot succeeded to arm_dection')
             return 'succeeded'
         else:
-            rospy.loginfo('Robot not succeeded to Init Position')
+            rospy.loginfo('Robot not succeeded to arm_dection')
             return 'aborted'
+
+# class Find_Bag(smach.State):
+#     def __init__(self):
+#         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+#         rospy.Subscriber("/pick_centroid", String, self.detect_bag_callback)
+#         self.found_bag = False
+
+#     def detect_bag_callback(self, msg):
+#         if msg.data != "None":
+#             response_something('find bag')
+#             rospy.loginfo("find ")
+#             self.found_bag = True
+    
+#     def Find_Bag(self):
+#         while not self.found_bag:
+#             response_something('not find')
+#             rospy.sleep(1)  
+#             return False
+
+#     def execute(self, userdata):
+#         rospy.loginfo('Executing state Find_Bag')
+
+
+#         # Check some conditions to decide whether to return 'succeeded' or'aborted'
+#         while not self.Find_Bag():
+#             if 
+#             rospy.loginfo('Robot succeeded to Init Position')
+#             return 'succeeded'
+#         else:
+#             rospy.loginfo('Robot not succeeded to Init Position')
+#             return 'aborted'
 
 class Find_Bag(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+        self.bag_goal = None
+        self.bag_direction = None
+        self.find_bag_sub = rospy.Subscriber("/pick_centroid", String, self.detect_bag_callback)
+        self.bag_direction_sub = rospy.Subscriber("/arm_status", String, self.detect_direction_callback)
+        self.attempt = 0
+        self.bag_look_direction = None
+        self.move_pose = [0.7,-0.98]
+        #self.LookToPoint = LookToPoint()
+        
+    def detect_bag_callback(self, msg):
+        self.bag_goal = msg.data
+        if self.bag_goal is not None:
+            self.bag_found = True
+        else:
+            self.bag_found = False
+        
+    def detect_direction_callback(self, msg):
+        self.bag_direction = msg.data
+        if self.bag_direction == "left":
+            self.bag_look_direction = -1.0
+        elif self.bag_direction == "right":
+            self.bag_look_direction = 1.0
+            
+    def continuous_move_head(self, look_direction, stop_event, interval=1.0):
+        while not stop_event.is_set():
+            move_head(look_direction)
+            rospy.sleep(interval)
+            
+    def move_head(self):
+        self.stop_event = threading.Event()
+        look_direction = [self.move_pose[0] * self.bag_look_direction, self.move_pose[1]]
+        self.head_thread = threading.Thread(target=self.continuous_move_head, args=(look_direction, self.stop_event))
+        self.head_thread.start()
+    
+    def FindBag(self):
+        if self.bag_direction is not None:
+            response_something("I am looking for the bag on the %s side" % self.bag_direction)      
+        self.move_head()
+        #self.LookToPoint
+        while not self.bag_found:
+            if self.attempt > 3:
+                return False
+            else:
+                self.attempt += 1
+        self.stop_event.set()
+        self.head_thread.join()
+        return True
 
     def execute(self, userdata):
         rospy.loginfo('Executing state InitPosition')
-        # Initialization logic her
-
-        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
-            rospy.loginfo('Robot succeeded to Init Position')
+        if self.FindBag(): 
+            rospy.loginfo('Robot succeeded to Find Bag')
             return 'succeeded'
         else:
-            rospy.loginfo('Robot not succeeded to Init Position')
+            rospy.loginfo('Robot not succeeded to Find Bag')
             return 'aborted'
-
+        
 class Move_to_Bag(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
 
-    def execute(self, userdata):
-        rospy.loginfo('Executing state InitPosition')
-        # Initialization logic her
 
-        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
-            rospy.loginfo('Robot succeeded to Init Position')
+    def execute(self, userdata):
+        rospy.loginfo('Executing state MovetoBag')
+        try:
+            subprocess.call(['rosrun', 'a_finial_project_robcup_athome', 'tiago_bag_follow.py'])
+            rospy.loginfo('Robot succeeded to MovetoBag')
             return 'succeeded'
-        else:
-            rospy.loginfo('Robot not succeeded to Init Position')
+        except:
+            rospy.loginfo("FAILED TO LAUNCH")
             return 'aborted'
-  
+        
 class Bag_Helper(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
@@ -189,9 +319,17 @@ class Bag_Helper(smach.State):
         else:
             rospy.loginfo('Robot not succeeded to Init Position')
             return 'aborted'
+        
 class BagGrasp(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+        self.look_right = [0.7,-0.98]
+        self.look_left = [-0.7,-0.98]
+        self.open_gripper = [0.04,0.04]
+        self.close_gripper = [0.0,0.0]
+
+    def bag_grasp(self):
+        response_something('Well, please let me grasp it')
 
     def execute(self, userdata):
         rospy.loginfo('Executing state InitPosition')
