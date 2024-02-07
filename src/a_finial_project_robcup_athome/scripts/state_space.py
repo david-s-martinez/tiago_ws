@@ -394,15 +394,12 @@ class Look_Human(smach.State):
 class Move_to_Human(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
-        self.finish_navigation = rospy.Publisher("/human_finish", String, queue_size = 1)
-        self.finish_navigation.publish("Not at Goal")
 
     def execute(self, userdata):
         rospy.loginfo('Executing state Move to Human')
         try:
-            response_something('I am now ready to follow you with your bag. Start moving away from me and I will follow.')
+            response_something("I am now ready to follow you with your bag. Start moving away from me and I will follow. When you are at your destination, I would ask you to raise your hand to tell me to stop.")
             subprocess.call(['roslaunch', 'a_finial_project_robcup_athome', 'follow_human.launch'])
-            # subprocess.call(['rosrun', 'a_finial_project_robcup_athome', 'tiago_human_follow.py'])
             rospy.loginfo('Robot succeeded to Move to Human')
             return 'succeeded'
         except:
@@ -417,6 +414,20 @@ class PutDown(smach.State):
         
         return 'succeeded'
     
+class ReturntoHome(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state ReturntoHome')
+        
+        if ReturntoHome(): 
+            subprocess.call(['rosrun', 'a_finial_project_robcup_athome', 'return_home.py'])
+            rospy.loginfo('Robot succeeded to ReturntoHome')
+            return 'succeeded'
+        else:
+            rospy.loginfo('Robot not succeeded to ReturntoHome')
+            return 'aborted'
 
 # main
 def main():

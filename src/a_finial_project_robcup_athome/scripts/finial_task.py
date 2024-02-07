@@ -137,7 +137,7 @@ class BagDetection(smach.State):
             rospy.loginfo("find ")
             self.found_bag = True
         # else:
-        #     response_something('find bag')
+        #     response_something('response_somethingfind bag')
         #     rospy.loginfo("find: " + msg.data)
         #     self.found_bag = True
 
@@ -425,25 +425,6 @@ def main():
                            transitions={'succeeded':'succeeded'
                                         # ,'aborted':'aborted'
                                         })
-
-        # Add states to the container and define the trasitions
-        # Navigate to user defined waypoint with callback
-        # smach.StateMachine.add('NAVIGATION_TO_TABLE_ONE', smach_ros.SimpleActionState("move_base", MoveBaseAction, goal_cb = nav_cb, input_keys=['navGoalInd'], output_keys=['navGoalInd']), 
-        #                         transitions={'succeeded':'FIND_TARGET_ON_TABLE_ONE',
-        #                                      'aborted':'aborted'})
-
-        # smach.StateMachine.add('NAVIGATION_TO_TABLE_TWO', smach_ros.SimpleActionState("move_base", MoveBaseAction, goal_cb = nav_cb, input_keys=['navGoalInd'], output_keys=['navGoalInd']), 
-        #                         transitions={'succeeded':'FIND_TARGET_ON_TABLE_TWO',
-        #                                     'aborted':'aborted'})
-
-        # smach.StateMachine.add('FIND_TARGET_ON_TABLE_ONE', FindTargat(), 
-        #                         transitions={'succeeded':'GRASP', 
-        #                                     'aborted':'NAVIGATION_TO_TABLE_TWO'})
-        # smach.StateMachine.add('FIND_TARGET_ON_TABLE_TWO', FindTargat(), 
-        #                         transitions={'succeeded':'GRASP', 
-        #                                     'aborted':'NAVIGATION_TO_TABLE_ONE'})
-        # smach.StateMachine.add('GRASP', Grasp(), 
-        #                         transitions={'succeeded':'succeeded'})
     # Use a introspection for visulize the state machine
     sis = smach_ros.IntrospectionServer('example_server', sm, '/SM_ROOT')
     sis.start()
