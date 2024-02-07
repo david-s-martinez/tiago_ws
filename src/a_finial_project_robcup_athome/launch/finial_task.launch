@@ -1,7 +1,7 @@
 <launch>
 
   <!-- Set the param that trajectory_execution_manager needs to find the controller plugin -->
-  <node name="finial_task_manager_node" type="finial_task.py" pkg="a_finial_project_robcup_athome" output="screen" />
+  <node name="finial_task_manager_node" type="state_space.py" pkg="a_finial_project_robcup_athome" output="screen" />
 
   <!-- The rest of the params are specific to this plugin -->
   <rosparam file="$(find a_finial_project_robcup_athome)/config/way_points.yaml"/>

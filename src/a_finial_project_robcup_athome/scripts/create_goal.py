@@ -15,7 +15,7 @@ MAP_FRAME_ID = "map" # Frame id of the map
 class GetTargetPoint:
     def __init__(self):
         # Initialize ROS nodes
-        # rospy.init_node(NODE_NAME, anonymous=True)
+        rospy.init_node(NODE_NAME, anonymous=True)
         rospy.Subscriber(GOAL_SUBSCRIBE, PointStamped, self.point_callback)
         self.listener = tf.TransformListener()
         self.goal_pub = rospy.Publisher(GOAL_PUBLISH, PoseStamped, queue_size=2)
@@ -27,7 +27,6 @@ class GetTargetPoint:
         camera_point.point = msg.point
 
         if camera_point.point.x is None or camera_point.point.y is None or camera_point.point.z is None:
-            
             rospy.loginfo("No point received from the camera")
             return
 

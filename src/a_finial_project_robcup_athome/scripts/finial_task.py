@@ -15,6 +15,10 @@ from try_grasp_input import move_arm,move_gripper,move_torso,move_head
 from tf_grasp import ArmController
 import threading
 from hands_command import HandDetector
+from create_goal import GetTargetPoint
+from tiago_human_follow import HumanFollow
+from geometry_msgs.msg import PoseStamped, PointStamped
+from std_msgs.msg import Header, String
 
 # define states
 def some_condition_is_true():
@@ -124,30 +128,61 @@ class BagDetection(smach.State):
         smach.State.__init__(self, outcomes=['detected', 'not_detected'])
         self.hand_detector = HandDetector()  # 创建手部识别器实例
         self.hand_direction = "" # 存储手部方向的变量
-        global hand_command
+        rospy.Subscriber("/pick_centroid", String, self.detect_bag_callback)
+        self.found_bag = False
+        
+    def detect_bag_callback(self, msg):
+        if msg.data != "None":
+            response_something('find bag')
+            rospy.loginfo("find ")
+            self.found_bag = True
+        # else:
+        #     response_something('find bag')
+        #     rospy.loginfo("find: " + msg.data)
+        #     self.found_bag = True
+
     def execute(self, userdata):
         rospy.loginfo('Executing state BagDetection')
         response_something('Please, choose which bag i should carry')
+        while not rospy.is_shutdown() and not self.found_bag:
+            response_something('not find')
+            rospy.sleep(1)  # 短暂休眠以避免CPU过载
 
-        rospy.sleep(5)
+        if rospy.is_shutdown():
+            rospy.loginfo('not_detected')
+            return 'not_detected'
+        elif self.found_bag:
+            rospy.loginfo('detected')
+            return 'detected'  
+        #rospy.Subscriber("/pick_centroid", String, self.detect_bag_callback)
+        #rospy.sleep(50)
+        # while not self.found_bag:
+        #     rospy.Subscriber("/pick_centroid", String, self.detect_bag_callback)
+        #     rospy.sleep(3)
+        #     if self.found_bag:
+        #         return 'detected'
+        # else:
+        #     return 'not_detected'
 
-        # 设定超时时间，例如60秒
-        timeout = rospy.Duration(60)
-        start_time = rospy.Time.now()
+        # # 设定超时时间，例如60秒
+        # timeout = rospy.Duration(60)
+        # start_time = rospy.Time.now()
 
-        while rospy.Time.now() - start_time < timeout:
-            rospy.loginfo('into while')
-            self.detect_bag()
-            print(self.hand_direction)
+        # rospy.Subscriber("/pick_centroid", String, self.detect_bag_callback)
 
-            if self.detect_bag():
-                #self.hand_direction = self.hand_detector.print_direction
-                response_something(f'I see, you want me to take the {self.hand_direction.lower()} one')
-                rospy.loginfo('Bag detected')
-                return 'detected'
+        # while rospy.Time.now() - start_time < timeout:
+        #     rospy.loginfo('into while')
+        #     self.detect_bag()
+        #     print(self.hand_direction)
 
-            # 没有检测到，等待10秒后再次检测
-            rospy.sleep(10)
+        #     if self.detect_bag():
+        #         #self.hand_direction = self.hand_detector.print_direction
+        #         response_something(f'I see, you want me to take the {self.hand_direction.lower()} one')
+        #         rospy.loginfo('Bag detected')
+        #         return 'detected'
+
+        #     # 没有检测到，等待10秒后再次检测
+        #     rospy.sleep(10)
 
         # Check some conditions to decide whether to return 'succeeded' or 'aborted'
         # if some_condition_is_true():  # Please replace it with actual conditional judgment logic
@@ -168,13 +203,14 @@ class BagDetection(smach.State):
         #     #         rospy.loginfo('Bag detected')
         #     #         return 'not_detected'# should change with detected
 
-        else:
-            rospy.loginfo('Bag not detected within 5 seconds')
-            return 'not_detected'
+        # else:
+        #     rospy.loginfo('Bag not detected within 5 seconds')
+        #     return 'not_detected'
 
     def detect_bag(self):
         # Implement your bag detection logic here
         self.hand_direction = self.hand_detector.direction_text
+        global hand_command
         hand_command = self.hand_direction
         if self.hand_direction == 'RIGHT':
             # 如果检测到右手，返回 True
@@ -201,11 +237,12 @@ class BagGrasp(smach.State):
         open_gripper = [0.04,0.04]
         close_gripper = [0.0,0.0]
         move_gripper(open_gripper)
-
+        global hand_command
+        head_command = hand_command
         stop_event = threading.Event()
-        if head_commdand == "Right":
+        if head_command == "Right":
             look_direction = look_right  # 或 look_left = [-0.7, -0.8]
-        elif head_commdand == "Left":
+        elif head_command == "Left":
             look_direction = look_left
         head_thread = threading.Thread(target=self.continuous_move_head, args=(look_direction, stop_event))
         head_thread.start()
@@ -263,13 +300,14 @@ class PeopleDetection(smach.State):
     
     def execute(self, userdata):
         rospy.loginfo('Executing state PeopleDetection')
-        response_something('i just make sure you are you')
+        response_something('come close , i just make sure you are you')
 
         ## do the detection
         rospy.sleep(5)
         # If a person is detected, return 'detected'
         if self.detect_person():
             rospy.loginfo('Person detected')
+            response_something('i see you ,i will begin to follow you')
             return 'detected'
       
         else:
@@ -277,6 +315,9 @@ class PeopleDetection(smach.State):
             return 'not_detected'
 
     def detect_person(self):
+        # self.pick_centroid_pub = rospy.Publisher('/pick_centroid', String, queue_size=10)
+        #rospy.Subscriber("/pick_centroid", String, self.point_callback)
+        # rospy.Subscriber("/goal_point", PointStamped, self.point_callback)
         # Implement your person detection logic here
         # Return True if a person is detected, otherwise False
         # For now, let's just return False as a placeholder
@@ -287,15 +328,28 @@ class Navigation(smach.State):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
 
     def execute(self, userdata):
-        if some_condition_is_true():
-            response_something('finially, we arrived.')
-            rospy.loginfo('Executing state Navigation')
-            # Navigation logic here
-            return 'succeeded'
-        else:
-            rospy.loginfo('failed to state Navigation')
-            # Navigation logic here
+        rospy.loginfo('Executing state Navigation')
+        target_point_getter = GetTargetPoint()
+
+        while not rospy.is_shutdown() and not target_point_getter.has_valid_point:
+            rospy.sleep(0.1)  
+
+        if rospy.is_shutdown():
             return 'aborted'
+
+        response_something('Finally, we arrived.')
+        return 'succeeded'
+
+        # if some_condition_is_true():
+            
+        #     rospy.loginfo('Executing state Navigation')
+        #     response_something('finially, we arrived.')
+        #     # Navigation logic here
+        #     return 'succeeded'
+        # else:
+        #     rospy.loginfo('failed to state Navigation')
+        #     # Navigation logic here
+        #     return 'aborted'
         
 class PutDown(smach.State):
     def __init__(self):
