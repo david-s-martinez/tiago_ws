@@ -37,8 +37,16 @@ class LookToPoint:
         # Subscribe to the image topic
         rospy.loginfo("Subscribing to " + self.image_topic + " ...")
         rospy.Subscriber(self.image_topic, Image, self.image_callback)
+        rospy.Subscriber('/bag_status', String, self.finish_callback)
         # Subscribe to the topic where the detections are being published
         self.centroid_sub = rospy.Subscriber(self.centroid_goal_topic, String, self.centroid_callback, buff_size=1)
+
+    def finish_callback(self, msg):
+        self.finish = msg.data
+        if self.finish == "Success":
+            self.finish_node = True
+        else:
+            self.finish_node = False
 
     def centroid_callback(self, centroid_msg):
         # rospy.sleep(0.5)
@@ -140,9 +148,11 @@ class LookToPoint:
 
         # Enter a loop that processes ROS callbacks. Press CTRL+C to exit the loop
         rospy.spin()
-
         # Destroy the OpenCV window
         cv2.destroyWindow(self.window_name)
+
+        if self.finish_node:
+            rospy.signal_shutdown("Complete")
 
 if __name__ == '__main__':
     look_to_point = LookToPoint()

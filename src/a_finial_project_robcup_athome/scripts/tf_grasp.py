@@ -97,11 +97,13 @@ class ArmController:
                 position = [transformed_point.point.x, transformed_point.point.y, transformed_point.point.z+0.43]  # X, Y, Z
 
                 orientation = [0, 1.6, 0]  # R, P, Y 
-
+                try:
                 # Move the arm to the specified position
-                self.move_arm(position, orientation)
+                    self.move_arm(position, orientation)
                 #rospy.sleep(3)
-                return self.move_arm(position, orientation)
+                    return True
+                except:
+                    return False
 
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
             rospy.logerr("TF Transform Error: %s" % e)

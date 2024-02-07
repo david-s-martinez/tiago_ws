@@ -168,7 +168,7 @@ class Arm_Dection(smach.State):
         
     def arm_dection_callback(self, msg):
         self.arm_style = msg.data
-        
+
     def arm_dection(self):
         while True:
             if self.attempt > 5:
@@ -293,11 +293,11 @@ class Move_to_Bag(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
 
-
     def execute(self, userdata):
         rospy.loginfo('Executing state MovetoBag')
         try:
             subprocess.call(['rosrun', 'a_finial_project_robcup_athome', 'tiago_bag_follow.py'])
+            subprocess.call(['rosrun', "a_finial_project_robcup_athome", 'follow_point.py'])
             rospy.loginfo('Robot succeeded to MovetoBag')
             return 'succeeded'
         except:
@@ -321,27 +321,62 @@ class Bag_Helper(smach.State):
             return 'aborted'
         
 class BagGrasp(smach.State):
-    def __init__(self):
+    def __init__(self,):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+        self.arm_controller = ArmController()
         self.look_right = [0.7,-0.98]
         self.look_left = [-0.7,-0.98]
         self.open_gripper = [0.04,0.04]
         self.close_gripper = [0.0,0.0]
+        self.squat_up = 0.3
+        self.squat_down = 0.13
+        # self.stop_event = threading.Event()
+        self.arm_style = None
 
-    def bag_grasp(self):
-        response_something('Well, please let me grasp it')
+    # def move_head_continuously(self, direction):
+    #     if direction == "right":
+    #         look_direction = self.look_right  
+    #     elif direction == "left":
+    #         look_direction = self.look_left
+    #     head_thread = threading.Thread(target=self.continuous_move_head, args=(look_direction, self.stop_event))
+    #     head_thread.start()
+    #     return head_thread
+
+    # def continuous_move_head(self, look_direction, stop_event, interval=1.0):
+    #     while not stop_event.is_set():
+    #         move_head(look_direction)
+    #         rospy.sleep(interval)
+
+    def grasp_bag(self):
+        arm_moved_successfully = False
+        attempt = 0
+        while not arm_moved_successfully and attempt < 3:
+            arm_moved_successfully = self.arm_controller.transform_and_move()
+            if not arm_moved_successfully:
+                rospy.loginfo("Attempt to move arm failed, retrying...")
+                attempt += 1
+                rospy.sleep(2)  # Wait for 2 seconds before retrying
+        return arm_moved_successfully
 
     def execute(self, userdata):
-        rospy.loginfo('Executing state InitPosition')
-        # Initialization logic her
+        rospy.loginfo('Executing state BagGrasp')
 
-        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
-            rospy.loginfo('Robot succeeded to Init Position')
-            return 'succeeded'
+        move_gripper(self.open_gripper)
+        # head_thread = self.move_head_continuously()
+        
+        rospy.sleep(5)
+        if self.grasp_bag():
+            rospy.loginfo('Robot succeeded to grasp the bag')
+            result = 'succeeded'
+            move_torso(self.squat_down)
+            rospy.sleep(5)
+            move_gripper(self.close_gripper)
+            rospy.sleep(3)
+            move_torso(self.squat_up)
         else:
-            rospy.loginfo('Robot not succeeded to Init Position')
-            return 'aborted'
+            rospy.loginfo('Robot failed to grasp the bag')
+            result = 'aborted'
+        return result
 
 class Look_Human(smach.State):
     def __init__(self):
@@ -362,17 +397,19 @@ class Look_Human(smach.State):
 class Move_to_Human(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+        self.finish_navigation = rospy.Publsiher("/human_finish", String, queue_size = 1)
+        self.finish_navigation.publish("Not at Goal")
 
     def execute(self, userdata):
-        rospy.loginfo('Executing state InitPosition')
-        # Initialization logic her
-
-        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
-            rospy.loginfo('Robot succeeded to Init Position')
+        rospy.loginfo('Executing state Move to Human')
+        try:
+            response_something('I am now ready to follow you with your bag. Start moving away from me and I will follow.')
+            subprocess.call(['roslaunch', 'a_finial_project_robcup_athome', 'follow_human.launch'])
+            # subprocess.call(['rosrun', 'a_finial_project_robcup_athome', 'tiago_human_follow.py'])
+            rospy.loginfo('Robot succeeded to Move to Human')
             return 'succeeded'
-        else:
-            rospy.loginfo('Robot not succeeded to Init Position')
+        except:
+            rospy.loginfo("FAILED TO LAUNCH")
             return 'aborted'
     
 class PutDown(smach.State):
