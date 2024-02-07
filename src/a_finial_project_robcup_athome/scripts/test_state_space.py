@@ -1,28 +1,13 @@
-class Move_to_Bag(smach.State):
+class Move_to_Human(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
-        self.bag_follow = BagFollow()
-        self.bag_status = rospy.Subsciber("/bag_status", String, self.bag_status_callback)
-        self.move_success = False
-        
-    def bag_status_callback(self, msg):
-        self.bag_status = msg.data
-        if self.bag_status == "Success":
-            self.move_success = True
-        else:
-            self.move_success = False
-        
-    def Move_to_Bag(self):
-        while self.move_success is False:
-            rospy.sleep(5)
-            continue
 
     def execute(self, userdata):
-        rospy.loginfo('Executing state MovetoBag')
-
-        if self.Move_to_Bag(): 
-            rospy.loginfo('Robot succeeded to MovetoBag')
+        rospy.loginfo('Executing state Move to Human')
+        try:
+            subprocess.call(['rosrun', 'a_finial_project_robcup_athome', 'tiago_human_follow.py'])
+            rospy.loginfo('Robot succeeded to Move to Bag')
             return 'succeeded'
-        else:
-            rospy.loginfo('Robot not succeeded to MovetoBag')
+        except:
+            rospy.loginfo("FAILED TO LAUNCH")
             return 'aborted'
