@@ -1,69 +1,79 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
+
+# Import required modules
 import rospy
 import smach
 import smach_ros
-import random
-from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
-import time
-import tf
 from actionlib import SimpleActionClient
+from move_base_msgs.msg import MoveBaseAction
 from pal_interaction_msgs.msg import TtsAction, TtsGoal
-from stt_microphone import DeepSpeechRecognizer
-from try_grasp_input import move_arm,move_gripper,move_torso,move_head
-from tf_grasp import ArmController
-import threading
-from hands_command import HandDetector
-from create_goal import GetTargetPoint
-#from tiago_human_follow import HumanFollow
 from geometry_msgs.msg import PoseStamped, PointStamped
 from std_msgs.msg import Header, String
-from tiago_bag_follow import BagFollow
+from actionlib_msgs.msg import GoalStatusArray
+from tf.transformations import quaternion_from_euler
 import subprocess
-from smach import State
+import threading
 
-# define states
-def some_condition_is_true():
-    return True
+# Your custom modules for specific robot capabilities
+from stt_microphone import DeepSpeechRecognizer
+from try_grasp_input import move_arm, move_gripper, move_torso, move_head
+from tf_grasp import ArmController
 
 def response_something(args):
-    #rospy.init_node('say_something')
-    command_line = args
-    args = command_line.split()  
-    # If the user adds some input, say what he wrote
-    if len(args) >= 1:
-        #Use " ".join(args[1:]) to replace the original loop splicing string
-        text = " ".join(args[0:])
-    # If not, just say a sentence
-    else:
-        text = "I don't got command"
+    """
+    Sends a text string to a ROS text-to-speech service to be spoken aloud by the robot.
+
+    Parameters:
+    - args: A string or command line arguments to be spoken by the robot.
+            If args is empty, a default message is spoken instead.
+    """
+    # Split the input arguments string by spaces
+    args = args.split()
+
+    # Use the entire input as the text to speak if any is provided, otherwise use a default message
+    text = " ".join(args) if args else "I don't have a command"
 
     rospy.loginfo("I'll say: " + text)
-    
-    # Connect to the text-to-speech action server
+
+    # Connect to the ROS text-to-speech action server
     client = SimpleActionClient('/tts', TtsAction)
     client.wait_for_server()
-    
-    # # Create a goal to say our sentence
+
+    # Create a goal with the text to be spoken
     goal = TtsGoal()
     goal.rawtext.text = text
-    goal.rawtext.lang_id = "en_GB"
-    
-    # Send the goal and wait
+    goal.rawtext.lang_id = "en_GB"  # Specify the language of the text
+
+    # Send the goal to the server and wait for it to finish
     client.send_goal_and_wait(goal)
 
-def recognize_speech( rate=16000, chunk=1024, record_seconds=5):
+
+def recognize_speech(rate=16000, chunk=1024, record_seconds=5):
+    """
+    Records audio from the microphone for a given duration and recognizes speech using a DeepSpeech model.
+
+    Parameters:
+    - rate: The sample rate of the audio recording.
+    - chunk: The size of each audio chunk to process.
+    - record_seconds: The duration in seconds for which to record audio.
+
+    Returns:
+    - text: The recognized text from the recorded audio.
+    """
+    # Paths to the DeepSpeech model and scorer files
     MODEL_FILE = '/home/jin/ros/tiago_ws/src/a_finial_project_robcup_athome/config/deepspeech-0.9.3-models.pbmm'
     SCORER_FILE = '/home/jin/ros/tiago_ws/src/a_finial_project_robcup_athome/config/deepspeech-0.9.3-models.scorer'
 
+    # Initialize the speech recognizer with the model, scorer, and recording parameters
     recognizer = DeepSpeechRecognizer(MODEL_FILE, SCORER_FILE, rate, chunk, record_seconds)
+
     try:
-        # Record and recognize
+        # Record audio and perform speech recognition
         text = recognizer.record_and_recognize()
         return text
     finally:
-        # Close resource
+        # Ensure the recognizer resources are released
         recognizer.close()
 
 
@@ -137,7 +147,7 @@ class Remind_People_to_come(smach.State):
         response_something('i give you five seconds to let me see you  ')
         rospy.sleep(5)
         # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
+        if True:  # Please replace it with actual conditional judgment logic
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
 
@@ -152,7 +162,7 @@ class Remind_People_to_come_2(smach.State):
         response_something('i give you five seconds to let me see you  ')
         rospy.sleep(5)
         # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
+        if True:  # Please replace it with actual conditional judgment logic
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
 
@@ -178,7 +188,7 @@ class Arm_Dection(smach.State):
                     return True
                 else:
                     # say something
-                    response_something('please rise your arm to choose, which bag i should carry ')
+                    response_something('please raise your arm to choose, which bag i should carry ')
                     self.attempt += 1
                     rospy.sleep(5)
 
@@ -194,37 +204,6 @@ class Arm_Dection(smach.State):
         else:
             rospy.loginfo('Robot not succeeded to arm_dection')
             return 'aborted'
-
-# class Find_Bag(smach.State):
-#     def __init__(self):
-#         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
-#         rospy.Subscriber("/pick_centroid", String, self.detect_bag_callback)
-#         self.found_bag = False
-
-#     def detect_bag_callback(self, msg):
-#         if msg.data != "None":
-#             response_something('find bag')
-#             rospy.loginfo("find ")
-#             self.found_bag = True
-    
-#     def Find_Bag(self):
-#         while not self.found_bag:
-#             response_something('not find')
-#             rospy.sleep(1)  
-#             return False
-
-#     def execute(self, userdata):
-#         rospy.loginfo('Executing state Find_Bag')
-
-
-#         # Check some conditions to decide whether to return 'succeeded' or'aborted'
-#         while not self.Find_Bag():
-#             if 
-#             rospy.loginfo('Robot succeeded to Init Position')
-#             return 'succeeded'
-#         else:
-#             rospy.loginfo('Robot not succeeded to Init Position')
-#             return 'aborted'
 
 class Find_Bag(smach.State):
     def __init__(self):
@@ -307,7 +286,7 @@ class Bag_Helper(smach.State):
         # Initialization logic her
 
         # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
+        if True:  # Please replace it with actual conditional judgment logic
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
         else:
@@ -317,13 +296,15 @@ class Bag_Helper(smach.State):
 class BagGrasp(smach.State):
     def __init__(self,):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+        rospy.Subscriber('/move_group/status', String, self.status_callback)
+        rospy.Subscriber('/move_group/status', GoalStatusArray, self.status_callback)
         self.arm_controller = ArmController()
-        self.look_right = [0.7,-0.98]
-        self.look_left = [-0.7,-0.98]
+        self.look_right = [0.65,-0.98]
+        self.look_left = [-0.65,-0.98]
         self.open_gripper = [0.04,0.04]
         self.close_gripper = [0.0,0.0]
         self.squat_up = 0.3
-        self.squat_down = 0.09
+        self.squat_down = 0.07
         # self.stop_event = threading.Event()
         self.arm_style = None
         self.EndPosition_arm = [0.07, -1.00, -0.93, 1.89, -0.71, -1.11, 1.33]
@@ -331,31 +312,31 @@ class BagGrasp(smach.State):
         self.InitPosition_torso = 0.2
         self.InitPosition_gripper = [0,0]
 
+        self.move_status = False
 
-    # def move_head_continuously(self, direction):
-    #     if direction == "right":
-    #         look_direction = self.look_right  
-    #     elif direction == "left":
-    #         look_direction = self.look_left
-    #     head_thread = threading.Thread(target=self.continuous_move_head, args=(look_direction, self.stop_event))
-    #     head_thread.start()
-    #     return head_thread
-
-    # def continuous_move_head(self, look_direction, stop_event, interval=1.0):
-    #     while not stop_event.is_set():
-    #         move_head(look_direction)
-    #         rospy.sleep(interval)
+    def status_callback(self, msg):
+        status = msg.status_list
+        for s in status:
+            state = s.status 
+            if state == 3:
+                self.move_status = True
+            else:
+                self.move_status = False
 
     def grasp_bag(self):
-        arm_moved_successfully = False
+        move_head([0, -0.98])
+        rospy.sleep(10)
+        self.move_status = False
         attempt = 0
-        while not arm_moved_successfully and attempt < 3:
-            arm_moved_successfully = self.arm_controller.transform_and_move()
-            if not arm_moved_successfully:
+        while True and attempt < 3:
+            self.arm_controller.transform_and_move()
+            if self.move_status:
+                return True
+            else:
                 rospy.loginfo("Attempt to move arm failed, retrying...")
                 attempt += 1
-                rospy.sleep(2)  # Wait for 2 seconds before retrying
-        return arm_moved_successfully
+                rospy.sleep(5)  # Wait for 2 seconds before retrying
+        return False
     
     def execute(self, userdata):
         rospy.loginfo('Executing state BagGrasp')
@@ -365,8 +346,33 @@ class BagGrasp(smach.State):
         
         rospy.sleep(5)
         if self.grasp_bag():
-            rospy.loginfo('Robot succeeded to grasp the bag')
+            rospy.loginfo('Robot succeeded to find bag')
             result = 'succeeded'
+        else:
+            rospy.loginfo('Robot failed to to find bag')
+            result = 'aborted'
+        return result
+
+class BagCollect(smach.State):
+    def __init__(self,):
+        smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
+        self.look_right = [0.65,-0.98]
+        self.look_left = [-0.65,-0.98]
+        self.open_gripper = [0.04,0.04]
+        self.close_gripper = [0.0,0.0]
+        self.squat_up = 0.3
+        self.squat_down = 0.07
+        self.arm_style = None
+        self.EndPosition_arm = [0.07, -1.00, -0.93, 1.89, -0.71, -1.11, 1.33]
+        self.InitPosition_head = [0,0]
+        self.InitPosition_torso = 0.2
+        self.InitPosition_gripper = [0,0]
+
+        self.move_status = False
+
+    def grasp_bag(self):
+        try:
+            move_torso(self.InitPosition_torso)
             rospy.sleep(3)
             move_torso(self.squat_down)
             rospy.sleep(5)
@@ -376,9 +382,19 @@ class BagGrasp(smach.State):
             rospy.sleep(3)
             move_arm(self.EndPosition_arm)
             rospy.sleep(2)
-            response_something("i have already got it ")
+            response_something("Got it!")
+            return True
+        except:
+            return False
+    
+    def execute(self, userdata):
+        rospy.loginfo('Executing state BagGrasp')
+        rospy.sleep(5)
+        if self.grasp_bag():
+            rospy.loginfo('Robot succeeded to find bag')
+            result = 'succeeded'
         else:
-            rospy.loginfo('Robot failed to grasp the bag')
+            rospy.loginfo('Robot failed to to find bag')
             result = 'aborted'
         return result
 
@@ -393,7 +409,7 @@ class Look_Human(smach.State):
         # Initialization logic her
 
         # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if some_condition_is_true():  # Please replace it with actual conditional judgment logic
+        if True:  # Please replace it with actual conditional judgment logic
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
         else:
@@ -419,10 +435,12 @@ class PutDown(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded'])
         self.end_position = [0.4, -1.17, -1.9, 2.3, -1.3, -0.45, 1.75]
+        self.open_gripper = [0.04,0.04]
     def execute(self, userdata):
         response_something('Here, you are .')
-        
         move_arm(self.end_position)
+        rospy.sleep(3)
+        move_gripper(self.open_gripper)
         rospy.sleep(10)
         response_something(' wish you have a good day')
         return 'succeeded'
@@ -454,53 +472,40 @@ def main():
     #bag_grasp_state = BagGrasp(arm_controller)
     with sm:
 
-        # Navigation callback
-        def nav_cb(userdata, goal):
-            navGoal = MoveBaseGoal()
-            navGoal.target_pose.header.frame_id = "map"
-            if userdata.navGoalInd == 1:
-                rospy.loginfo('Navagate to table one')
-                waypoint = rospy.get_param('/way_points/table_one')
-                userdata.navGoalInd = 2
-            elif userdata.navGoalInd == 2:
-                rospy.loginfo('Navagate to table two')
-                waypoint = rospy.get_param('/way_points/table_two')
-                userdata.navGoalInd = 1
-            navGoal.target_pose.pose.position.x = waypoint["x"]
-            navGoal.target_pose.pose.position.y = waypoint["y"]
-            navGoal.target_pose.pose.position.z = waypoint["z"]
-            #navGoal.target_pose.pose.orientation.w = waypoint["w"]
-            quaternion = tf.transformations.quaternion_from_euler(waypoint["roll"], waypoint["pitch"], waypoint["yaw"])
-            navGoal.target_pose.pose.orientation.x = quaternion[0]
-            navGoal.target_pose.pose.orientation.y = quaternion[1]
-            navGoal.target_pose.pose.orientation.z = quaternion[2]
-            navGoal.target_pose.pose.orientation.w = quaternion[3]
-            return navGoal
-
         smach.StateMachine.add('INIT_POSITION', InitPosition(), 
                                transitions={'succeeded':'Find_Human',
                                             'aborted':'aborted'})
+        # smach.StateMachine.add('Find_Human', Find_Human(), 
+        #                        transitions={'succeeded':'Arm_Dection',
+        #                                     'aborted':'Remind_People_to_come'})
         smach.StateMachine.add('Find_Human', Find_Human(), 
-                               transitions={'succeeded':'Arm_Dection',
+                               transitions={'succeeded':'Look_Human',
                                             'aborted':'Remind_People_to_come'})
         smach.StateMachine.add('Remind_People_to_come', Remind_People_to_come(), 
                                transitions={'succeeded':'Find_Human'})
         
-        smach.StateMachine.add('Arm_Dection', Arm_Dection(), 
-                               transitions={'succeeded':'Find_Bag',
-                                            'aborted':'Find_Human'})
-        smach.StateMachine.add('Find_Bag', Find_Bag(), 
-                               transitions={'succeeded':'Move_to_Bag',
-                                            'aborted':'aborted'})
-        smach.StateMachine.add('Move_to_Bag', Move_to_Bag(), 
-                               transitions={'succeeded':'BagGrasp',
-                                            'aborted':'Bag_Helper'})
-        smach.StateMachine.add('Bag_Helper', Bag_Helper(), 
-                               transitions={'succeeded':'Find_Bag',
-                                            'aborted':'aborted'})       
-        smach.StateMachine.add('BagGrasp', BagGrasp(), 
-                               transitions={'succeeded':'Look_Human',
-                                            'aborted':'aborted'})
+        # smach.StateMachine.add('Arm_Dection', Arm_Dection(), 
+        #                        transitions={'succeeded':'Find_Bag',
+        #                                     'aborted':'Find_Human'})
+        # smach.StateMachine.add('Find_Bag', Find_Bag(), 
+        #                        transitions={'succeeded':'Move_to_Bag',
+        #                                     'aborted':'aborted'})
+        # smach.StateMachine.add('Move_to_Bag', Move_to_Bag(), 
+        #                        transitions={'succeeded':'BagGrasp',
+        #                                     'aborted':'Bag_Helper'})
+        # smach.StateMachine.add('Bag_Helper', Bag_Helper(), 
+        #                        transitions={'succeeded':'Find_Bag',
+        #                                     'aborted':'aborted'})       
+        # smach.StateMachine.add('BagGrasp', BagGrasp(), 
+        #                        transitions={'succeeded':'BagCollect',
+        #                                     'aborted':'aborted'})
+        
+        # smach.StateMachine.add('BagCollect', BagCollect(), 
+        #                        transitions={'succeeded':'Look_Human',
+        #                                     'aborted':'aborted'})
+
+
+        
         smach.StateMachine.add('Look_Human', Look_Human(), 
                                transitions={'succeeded':'Move_to_Human',
                                             'aborted':'Remind_People_to_come_2'})
@@ -515,25 +520,6 @@ def main():
                                         })
         smach.StateMachine.add("ReturntoHome", ReturntoHome(), transitions={'succeeded':'succeeded'})
 
-        # Add states to the container and define the trasitions
-        # Navigate to user defined waypoint with callback
-        # smach.StateMachine.add('NAVIGATION_TO_TABLE_ONE', smach_ros.SimpleActionState("move_base", MoveBaseAction, goal_cb = nav_cb, input_keys=['navGoalInd'], output_keys=['navGoalInd']), 
-        #                         transitions={'succeeded':'FIND_TARGET_ON_TABLE_ONE',
-        #                                      'aborted':'aborted'})
-
-        # smach.StateMachine.add('NAVIGATION_TO_TABLE_TWO', smach_ros.SimpleActionState("move_base", MoveBaseAction, goal_cb = nav_cb, input_keys=['navGoalInd'], output_keys=['navGoalInd']), 
-        #                         transitions={'succeeded':'FIND_TARGET_ON_TABLE_TWO',
-        #                                     'aborted':'aborted'})
-
-        # smach.StateMachine.add('FIND_TARGET_ON_TABLE_ONE', FindTargat(), 
-        #                         transitions={'succeeded':'GRASP', 
-        #                                     'aborted':'NAVIGATION_TO_TABLE_TWO'})
-        # smach.StateMachine.add('FIND_TARGET_ON_TABLE_TWO', FindTargat(), 
-        #                         transitions={'succeeded':'GRASP', 
-        #                                     'aborted':'NAVIGATION_TO_TABLE_ONE'})
-        # smach.StateMachine.add('GRASP', Grasp(), 
-        #                         transitions={'succeeded':'succeeded'})
-    # Use a introspection for visulize the state machine
     sis = smach_ros.IntrospectionServer('example_server', sm, '/SM_ROOT')
     sis.start()
     # Execute SMACH plan

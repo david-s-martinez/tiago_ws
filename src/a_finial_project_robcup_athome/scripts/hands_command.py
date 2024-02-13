@@ -122,7 +122,7 @@ class HandDetector:
 if __name__ == '__main__':
     rospy.init_node('hand_tracking_node', anonymous=True)
     hand_detector = HandDetector()
-    print(hand_detector.print_direction())
+    print(hand_detector.print_direction)
     try:
         rospy.spin()
     except KeyboardInterrupt:

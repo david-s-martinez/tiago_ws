@@ -241,7 +241,7 @@ class BagGrasp(smach.State):
         head_command = hand_command
         stop_event = threading.Event()
         if head_command == "Right":
-            look_direction = look_right  # 或 look_left = [-0.7, -0.8]
+            look_direction = look_right  # or look_left = [-0.7, -0.8]
         elif head_command == "Left":
             look_direction = look_left
         head_thread = threading.Thread(target=self.continuous_move_head, args=(look_direction, stop_event))
@@ -269,7 +269,7 @@ class BagGrasp(smach.State):
         move_torso(squat_up)
         rospy.sleep(5)
         # move_arm(InitPosition_arm)
-        # 停止持续移动头部的线程
+
         stop_event.set()
         head_thread.join()
 

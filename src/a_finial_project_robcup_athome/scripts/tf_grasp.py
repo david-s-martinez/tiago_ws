@@ -6,22 +6,10 @@ import geometry_msgs.msg
 from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PointStamped
+from actionlib_msgs.msg import GoalStatusArray
 import sys
 import numpy as np
 
-# change the delay to 25 secs in /opt/ros/noetic/lib/python3/dist-packages/moveit_commander/move_group.py:
-# class MoveGroupCommander(object):
-#     """
-#     Execution of simple commands for a particular group
-#     """
-
-#     def __init__(
-#         self, name, robot_description="robot_description", ns="", wait_for_servers=25.0
-#     ):
-#         """Specify the group name for which to construct this commander instance. Throws an exception if there is an initialization error."""
-#         self._g = _moveit_move_group_interface.MoveGroupInterface(
-#             name, robot_description, ns, wait_for_servers
-#         )
 class ArmController:
     def __init__(self):
         # Initialize MoveIt! Commander and ROS nodes
@@ -29,18 +17,31 @@ class ArmController:
         rospy.sleep(10)
         #rospy.init_node('tiago_arm_controller', anonymous=True)
         rospy.Subscriber("/pick_point", PointStamped, self.point_callback)
+        rospy.Subscriber('/move_group/status', GoalStatusArray, self.status_callback)
 
         # Initialize the MoveGroupCommander object
         self.arm_group = moveit_commander.MoveGroupCommander("arm_torso")
         rospy.sleep(10)
-
         # Set reference coordinate system
         self.arm_group.set_pose_reference_frame("base_footprint")
+
         # Create tf listener
         self.listener = tf.TransformListener()
+
         self.pick_x = None
         self.pick_y = None
         self.pick_z = None
+
+        self.move_status = False
+
+    def status_callback(self, msg):
+        status = msg.status_list
+        for s in status:
+            state = s.status 
+            if state == 3:
+                self.move_status = True
+            else:
+                self.move_status = False
 
     def point_callback(self, msg):
         self.pick_x = msg.point.x
@@ -67,12 +68,18 @@ class ArmController:
         self.arm_group.set_pose_target(target_pose)
         plan = self.arm_group.plan()
 
-        # implement
+        self.move_status = None
         self.arm_group.go(wait=True)
-
-        # Clear target pose
         self.arm_group.clear_pose_targets()
-        return True   
+
+        rospy.sleep(2)
+
+        rospy.loginfo(self.move_status)
+
+        if self.move_status:
+            return True
+        else:
+            return False
 
     # def transform_and_move(self,camera_point):
     def transform_and_move(self):
@@ -98,12 +105,9 @@ class ArmController:
 
                 orientation = [0, 1.6, 0]  # R, P, Y 
                 try:
-                # Move the arm to the specified position
                     self.move_arm(position, orientation)
-                #rospy.sleep(3)
-                    return True
                 except:
-                    return False
+                    rospy.loginfo("Failed to move arm")
 
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
             rospy.logerr("TF Transform Error: %s" % e)
