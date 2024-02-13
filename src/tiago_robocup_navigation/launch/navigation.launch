@@ -1,0 +1,22 @@
+<!-- FILEPATH: /tiago_public_ws/src/tiago_robocup_navigation/launch/navigation.launch -->
+
+<launch>
+    <!-- Launch gmapping -->
+
+    <include file="$(find tiago_robocup_navigation)/launch/mapping_gmapping.launch"/>
+
+    <!-- Launch amcl -->
+    <!-- <include file="$(find tiago_robocup_navigation)/launch/localization_amcl.launch"/> -->
+
+    <arg name="file" default="$(find tiago_robocup_navigation)/config/tiago_navigation_rviz.rviz"/>
+        <!-- create_human_goal node -->
+    <node pkg="tiago_robocup_navigation" type="create_human_goal.py" name="create_human_goal" output="screen"/>
+    <!-- create_bag_goal node -->
+    <node pkg="tiago_robocup_navigation" type="create_bag_goal.py" name="create_bag_goal" output="screen"/>
+
+    <!-- Launch rviz -->
+    <node name="rviz" pkg="rviz" type="rviz"
+            args="-d $(arg file)"/>
+        
+
+</launch>
