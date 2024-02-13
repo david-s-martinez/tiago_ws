@@ -114,7 +114,7 @@ class LookToBag:
             goal.max_velocity = 0.07
             goal.target = point_stamped
 
-            self.point_head_client.send_goal(goal, done_cb=lambda state: rospy.loginfo('Done Moving!'))
+            self.point_head_client.send_goal(goal)
         else:
             rospy.loginfo("Centroid is outside the predefined rectangle. Skipping goal.")
 
