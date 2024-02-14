@@ -174,3 +174,111 @@ points:
 rosrun robocup_at_home_final_project try_moveit.py
 ```
 Use rosrun to give the point, try to get the point from RViz.
+
+# TIAGo Robot Tutorials (Jin, David)
+
+This repository contains a series of tutorials designed to guide users through various aspects of working with the TIAGo robot in ROS (Robot Operating System). Below are instructions for installing TIAGo, running simulations, performing object detection, navigation, perception, and robot manipulation.
+
+## Installation
+
+To install TIAGo and ROS, follow the instructions provided in the [TIAGo installation tutorial](https://wiki.ros.org/Robots/TIAGo/Tutorials/Installation/InstallUbuntuAndROS). Once installed, use the following command to set up the required packages:
+
+```bash
+rosinstall ./src /opt/ros/noetic tiago_public−noetic.rosinstall
+```
+
+## Tutorial 2: Simulation Scenario
+
+### 1. Simulation Launch
+Launch TIAGo in a simulated environment using Gazebo:
+
+```bash
+roslaunch ics_gazebo tiago.launch world_suffix:=tutorial2
+```
+
+### 2. Rviz Configuration
+Launch Rviz with the TIAGo robot model:
+
+```bash
+roslaunch ics_gazebo tiago.launch world_suffix:=tutorial
+```
+
+### 3. Controller Plugin
+Run the look_to_point node for controlling the robot's gaze:
+
+```bash
+rosrun look_to_point look_to_point
+```
+
+## Tutorial 3: Mapping, Localization, and Navigation
+
+### 1. Mapping
+Generate maps for different environments using TIAGo:
+
+```bash
+roslaunch tiago_2dnav_gazebo tiago_mapping.launch public_sim:=true world:=tutorial_office
+```
+
+### 2. Localization
+Initialize localization for the robot:
+
+```bash
+roslaunch tiago_localization tiago_localization.launch
+```
+
+### 3. Navigation
+Navigate through the mapped environment using the MoveIt! package:
+
+```bash
+roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true
+roslaunch tiago_move tiago_move.launch
+```
+
+## Tutorial 4: Object Detection and Point Cloud Segmentation
+
+### 1. World Creation
+Create a world for perception tasks:
+
+```bash
+roslaunch object_detection_world tiago.launch world_suffix:=objects
+```
+
+### 2. Object Detection
+Follow the installation instructions for the Yolact repository and run object detection scripts:
+
+```bash
+cd YOLACT-mini-Instance-segmentation
+python detect_tiago.py
+```
+
+## Tutorial 5: Navigation and Robot Manipulation
+
+### 1. Navigation
+Set up navigation in a custom world:
+
+```bash
+roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
+```
+
+### 2. Perception
+Perform perception tasks in the environment.
+
+### 3. Robot Manipulation
+Launch manipulation capabilities for TIAGo:
+
+```bash
+roslaunch tiago_move_pick_place tiago_move.launch
+```
+
+For a state machine approach, restart the setup process.
+
+### 4. State Machine
+
+```bash
+roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
+sudo apt-get install ros-noetic-smach-viewer
+rosrun smach_viewer smach_viewer.py
+roslaunch hsrb_task_manager task_manager.launch
+```
+
+By following these tutorials, users can gain practical experience in setting up and utilizing the TIAGo robot for various robotics applications in ROS.
