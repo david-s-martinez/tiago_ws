@@ -38,13 +38,13 @@ chmod 644 /home/jin/models/models.pbmm
 chmod 644 /home/jin/models/models.scorer
 ```
 
-# Install PortAudio
+## Install PortAudio
 ```bash
 sudo apt-get install portaudio19-dev
 pip install pyaudio
 ```
 
-# Install Speech Processing Libraries
+## Install Speech Processing Libraries
 ```bash
 pip install SpeechRecognition
 pip install vosk
@@ -52,29 +52,24 @@ pip install core
 pip install gtts
 ```
 
-# ROS Dependencies
+## ROS Dependencies
 ```bash
 rosdep install --from-paths src --ignore-src -r -y
 ```
 
-## Connecting to TIAGo
+# TIAGo Setup
 
-# Set Timezone to UTC
+## Connecting to TIAGo
+Set Timezone to UTC
 ```bash
 sudo timedatectl set-timezone UTC
 ```
-
 To SSH into TIAGo:
 ```bash
 ssh pal@192.168.1.200
 ```
-
-Before working with ROS packages, source the ROS setup files:
-```bash
-source /opt/ros/noetic/setup.bash
-```
-
 To connect your computer to the robot, follow these steps:
+Access the robot's web interface at [http://192.168.1.200](http://192.168.1.200)
 
 Update your machine's IP address
 ifconfig or use `ip addr` to find your IP address
@@ -88,8 +83,12 @@ Verify connectivity with the robot
 ```bash
 ping 192.168.1.200 -c 4
 ```
-Access the robot's web interface at http://192.168.1.200
 
+## ROS Setup
+Before working with ROS packages, source the ROS setup files:
+```bash
+source /opt/ros/noetic/setup.bash
+```
 Kill any running Gazebo instances
 ```bash
 killall gzserver
@@ -100,55 +99,62 @@ Source ROS Noetic setup file
 source /opt/ros/noetic/setup.bash
 source /devel/setup.bash
 ```
-To remote control of the robot use
-```bash
-rosrun key_teleop key_teleop.py
-Note: The robot will not move if this script is running
-```
-## RoboCup@Home Final Task Launch
+
+# RoboCup@Home Final Task Launch
 Disable services using the web manager or command line
 ```bash
 rosnode kill /head_manager
 rosnode kill /map_server
 rosnode kill /dock_charge_sm
 ```
-Launch Navigation
+## Launch Navigation
 ```bash
 roslaunch robocup_at_home_final_navigation navigation.launch
 ```
 In the web browser, manage services:
 Kill move_base and localizer, then restart them
 
-Launch vision system
+## Launch vision system
 ```bash
 cd YOLCAT-mini-Instance-segmentation
 python3 detect_tiago_bodypose.py
 ```
-Launch State Space Model
+## Launch State Space Model
 ```bash
 rosrun smach_viewer smach_viewer.py
 ```
-Launch MoveIt! for motion planning
+## Launch MoveIt! for motion planning
 ```bash
 roslaunch tiago_moveit_config demo.launch
 ```
-Launch the final task state space model
+## Launch the Project
 ```bash
 roslaunch robocup_at_home_final_project final_task.launch
 ```
-## Additional Notes
-Test bag grasping
+
+# Additional Notes
+
+## Remote Control the Robot
+To remote control of the robot use
+```bash
+rosrun key_teleop key_teleop.py
+```
+Note: The robot will not move if this script is running
+
+## Test bag grasping
 ```bash
 roslaunch tiago_moveit_config demo.launch
 rosrun robocup_at_home_final_project tf_grasp.py
 ```
-Reset simulation environment if needed
+
+## Reset simulation environment if needed
 ```bash
 killall gzserver
 killall gzclient
 rqt_graph
 ```
-Control arm movement
+
+## Control arm movement
 ```bash
 rostopic pub /arm_controller/command trajectory_msgs/JointTrajectory "header:
   seq: 0
@@ -163,7 +169,7 @@ points:
   time_from_start: {secs: 1, nsecs: 0}"
 ```
 
-Use with the MoveIt! command to practice grasping
+## Use with the MoveIt! command to practice grasping
 ```bash
 rosrun robocup_at_home_final_project try_moveit.py
 ```
