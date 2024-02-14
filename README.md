@@ -77,66 +77,79 @@ source /opt/ros/noetic/setup.bash
 To connect your computer to the robot, follow these steps:
 
 Update your machine's IP address
-ifconfig # or use `ip addr` to find your IP address
+ifconfig or use `ip addr` to find your IP address
 
 Set ROS environment variables
+```bash
 export ROS_IP=192.168.1.<your ip addr>
 export ROS_MASTER_URI=http://192.168.1.200:11311
-
+```
 Verify connectivity with the robot
+```bash
 ping 192.168.1.200 -c 4
-
+```
 Access the robot's web interface at http://192.168.1.200
 
 Kill any running Gazebo instances
+```bash
 killall gzserver
 killall gzclient
-
+```
 Source ROS Noetic setup file
+```bash
 source /opt/ros/noetic/setup.bash
 source /devel/setup.bash
-
+```
 To remote control of the robot use
+```bash
 rosrun key_teleop key_teleop.py
 Note: The robot will not move if this script is running
-
+```
 ## RoboCup@Home Final Task Launch
 Disable services using the web manager or command line
+```bash
 rosnode kill /head_manager
 rosnode kill /map_server
 rosnode kill /dock_charge_sm
-
+```
 Launch Navigation
+```bash
 roslaunch robocup_at_home_final_navigation navigation.launch
-
+```
 In the web browser, manage services:
 Kill move_base and localizer, then restart them
 
 Launch vision system
+```bash
 cd YOLCAT-mini-Instance-segmentation
 python3 detect_tiago_bodypose.py
-
+```
 Launch State Space Model
+```bash
 rosrun smach_viewer smach_viewer.py
-
+```
 Launch MoveIt! for motion planning
+```bash
 roslaunch tiago_moveit_config demo.launch
-
+```
 Launch the final task state space model
+```bash
 roslaunch robocup_at_home_final_project final_task.launch
-
+```
 ## Additional Notes
-
-# Test bag grasping
+Test bag grasping
+```bash
 roslaunch tiago_moveit_config demo.launch
 rosrun robocup_at_home_final_project tf_grasp.py
-
-# Reset simulation environment if needed
+```
+Reset simulation environment if needed
+```bash
 killall gzserver
 killall gzclient
 rqt_graph
-
-# Control arm movement
+```
+Control arm movement
+```bash
 rostopic pub /arm_controller/command trajectory_msgs/JointTrajectory "header:
   seq: 0
   stamp: {secs: 0, nsecs: 0}
@@ -148,7 +161,10 @@ points:
   accelerations: []
   effort: []
   time_from_start: {secs: 1, nsecs: 0}"
+```
 
-# Use with the MoveIt! command to practice grasping
+Use with the MoveIt! command to practice grasping
+```bash
 rosrun robocup_at_home_final_project try_moveit.py
-# Use rosrun to give the point, try to get the point from RViz.
+```
+Use rosrun to give the point, try to get the point from RViz.
