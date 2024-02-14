@@ -1,7 +1,0 @@
-<launch>
-
-  <!-- Set the param that trajectory_execution_manager needs to find the controller plugin -->
-  <node name="tiago_bag_follow" type="tiago_bag_follow.py" pkg="a_finial_project_robcup_athome" output="screen" />
-  <!-- <node name="follow_bag" type="follow_bag.py" pkg="a_finial_project_robcup_athome" output="screen" /> -->
-
-</launch>

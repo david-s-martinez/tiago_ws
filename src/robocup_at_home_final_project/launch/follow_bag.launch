@@ -1,0 +1,4 @@
+<launch>
+  <!-- Launch file for following a bag -->
+  <node name="tiago_bag_follow" type="tiago_bag_follow.py" pkg="robocup_at_home_final_project" output="screen" />
+</launch>

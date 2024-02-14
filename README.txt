@@ -1,256 +1,154 @@
-Tiago Installation:
+# TIAGo Robot Installation Guide and Task Execution Instructions
 
-https://wiki.ros.org/Robots/TIAGo/Tutorials/Installation/InstallUbuntuAndROS
-rosinstall ./src /opt/ros/noetic tiago_public−noetic.rosinstall
+This document outlines the steps for setting up the TIAGo robot environment, including the installation of Ubuntu and ROS, the necessary hardware setup, and executing tasks for RoboCup@Home final task - Carry My Luggage.
 
-Tutorial 2:
-Tiago was used for all.
+## Installation
 
-6.1 Simulation scenario:
-roslaunch ics_gazebo tiago.launch world_suffix:=tutorial2
+1. **Ubuntu and ROS Installation**
 
-6.2 Rviz configuration file
-roslaunch ics_gazebo tiago.launch world_suffix:=tutorial
+    Follow the instructions on the ROS wiki to install Ubuntu and ROS for TIAGo:
+    [Install Ubuntu and ROS](https://wiki.ros.org/Robots/TIAGo/Tutorials/Installation/InstallUbuntuAndROS)
 
-6.3 Controller plugin
-rosrun look_to_point look_to_point
-TODO based on look_to_point rosrun:
-roslaunch controllers_tutorials combined_resource_controller_tiago.launch
+    Use the following command to integrate TIAGo's public ROS workspace:
+    ```bash
+    rosinstall ./src /opt/ros/noetic tiago_public−noetic.rosinstall
+    ```
 
-Tutorial 3:
-Tiago was used for all.
+2. **Hardware Handbook**
 
-1: Generate maps for two worlds using Tiago 
-roslaunch tiago_2dnav_gazebo tiago_mapping.launch public_sim:=true world:=tutorial_office
-roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true lost:=true map:=$HOME/.pal/tiago_maps/configurations/tutorial3_1
-*Change map path accordingly
+    For detailed information on TIAGo's hardware, refer to the PAL Robotics handbook:
+    [TIAGo Hardware Handbook](https://docs.pal-robotics.com/tiago-single/handbook.html)
 
-2: Localization
-roslaunch tiago_localization tiago_localization.launch
+3. **Web Manager**
 
-3: Navigate the Map, 4: Planning in Cartesian space with MoveIt!
-roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true
-roslaunch tiago_move tiago_move.launch
+    Access the robot's web manager at:
+    [http://tiago-46c:8080/?&wtd=VtoPWd6ULoaYaohm](http://tiago-46c:8080/?&wtd=VtoPWd6ULoaYaohm)
 
-Tutorial 4:
-Tiago was used for all.
-1: Create a world for perception
+## Prerequisite Downloads
 
-roslaunch object_detection_world tiago.launch world_suffix:=objects
+Execute the following commands to install necessary packages and dependencies:
 
-2: Object detection
+```bash
+sudo apt install python3-pip
+pip3 install deepspeech pyaudio numpy
+# Download Deepspeech models and set permissions
+wget https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.pbmm
+wget https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.scorer
+chmod 644 /home/jin/models/models.pbmm
+chmod 644 /home/jin/models/models.scorer
+```
 
-Follow the installation on the Yolact repo.
-cd YOLACT-mini-Instance-segmentation
-python detect_tiago.py
+# Install PortAudio
+```bash
+sudo apt-get install portaudio19-dev
+pip install pyaudio
+```
 
-object detection video:
-https://youtu.be/Gstdm_uIWaY
+# Install Speech Processing Libraries
+```bash
+pip install SpeechRecognition
+pip install vosk
+pip install core
+pip install gtts
+```
 
-3: Point cloud segmentation
+# ROS Dependencies
+```bash
+rosdep install --from-paths src --ignore-src -r -y
+```
 
-roslaunch plane_segmentation plane_segmentation_tiago.launch
-Find the right view with:
-rosrun look_to_point look_to_point
+## Connecting to TIAGo
 
-table segmentation video:
-https://youtu.be/O1RgS5MCy3w
+# Set Timezone to UTC
+```bash
+sudo timedatectl set-timezone UTC
+```
 
-object segmentation video:
-https://youtu.be/WEavimqxH1s
-
-4: TODO
-
-Tutorial 5
-
-1: Navigation
-First move the src/object_detection_world/worlds/pick_place.world file to pal_gazebo_worlds/worlds
-
-$ roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
-*Change map path according to your system, all maps are found under the ./maps/ directory in this repo.
-
-$ rosservice call /global_localization "{}"
-
-$ roslaunch tiago_localization tiago_localization.launch
-
-2: Perception
-
-3: Robot manipulation
-$ roslaunch tiago_move_pick_place tiago_move.launch
-
-if you want to use state machine you should start over
-4: State 
-
-$ roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
-
-$ sudo apt-get install ros-noetic-smach-viewer
-
-$ rosrun smach_viewer smach_viewer.py
-
-$ roslaunch hsrb_task_manager task_manager.launch
-
-Finial task
-# Tiago is using UTC, so changing the time zone on your PC to UTC zone is better.
-
-$ sudo timedatectl set-timezone UTC
-
+To SSH into TIAGo:
+```bash
 ssh pal@192.168.1.200
+```
 
+Before working with ROS packages, source the ROS setup files:
+```bash
 source /opt/ros/noetic/setup.bash
+```
 
-export ROS_IP=192.168.1.105
+To connect your computer to the robot, follow these steps:
+
+Update your machine's IP address
+ifconfig # or use `ip addr` to find your IP address
+
+Set ROS environment variables
+export ROS_IP=192.168.1.<your ip addr>
 export ROS_MASTER_URI=http://192.168.1.200:11311
 
-ping 192.168.1.200
-on web: 192.168.1.200
-http://tiago-46c:8080/?&wtd=VtoPWd6ULoaYaohm
+Verify connectivity with the robot
+ping 192.168.1.200 -c 4
 
+Access the robot's web interface at http://192.168.1.200
+
+Kill any running Gazebo instances
+killall gzserver
+killall gzclient
+
+Source ROS Noetic setup file
+source /opt/ros/noetic/setup.bash
+source /devel/setup.bash
+
+To remote control of the robot use
+rosrun key_teleop key_teleop.py
+Note: The robot will not move if this script is running
+
+## RoboCup@Home Final Task Launch
+Disable services using the web manager or command line
+rosnode kill /head_manager
+rosnode kill /map_server
+rosnode kill /dock_charge_sm
+
+Launch Navigation
+roslaunch robocup_at_home_final_navigation navigation.launch
+
+In the web browser, manage services:
+Kill move_base and localizer, then restart them
+
+Launch vision system
+cd YOLCAT-mini-Instance-segmentation
+python3 detect_tiago_bodypose.py
+
+Launch State Space Model
+rosrun smach_viewer smach_viewer.py
+
+Launch MoveIt! for motion planning
+roslaunch tiago_moveit_config demo.launch
+
+Launch the final task state space model
+roslaunch robocup_at_home_final_project final_task.launch
+
+## Additional Notes
+
+# Test bag grasping
+roslaunch tiago_moveit_config demo.launch
+rosrun robocup_at_home_final_project tf_grasp.py
+
+# Reset simulation environment if needed
 killall gzserver
 killall gzclient
 rqt_graph
 
-rosrun key_teleop key_teleop.py
-
-demo
-roslaunch tiago_gazebo tiago_gazebo.launch public_sim:=true end_effector:=pal-gripper
-
-roslaunch object_detection_world tiago.launch world_suffix:=empty
-
-rosrun rqt_joint_trajectory_controller rqt_joint_trajectory_controller
-use GUI to look objects :(controller--->head_controller head_1_joint:0 head_2_joint:-0.8)
-
-
-1: Navigation
-First move the src/object_detection_world/worlds/pick_place.world file to pal_gazebo_worlds/worlds
-
-$ roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
-*Change map path according to your system, all maps are found under the ./maps/ directory in this repo.
-
-$ rosservice call /global_localization "{}"
-
-$ roslaunch tiago_localization tiago_localization.launch
-
-2: Perception
-
-3: Robot manipulation
-$ roslaunch tiago_move_pick_place tiago_move.launch
-
-if you want to use state machine you should start over
-4: State 
-
-$ roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
-
-$ sudo apt-get install ros-noetic-smach-viewer
-
-$ rosrun smach_viewer smach_viewer.py
-
- /tiago_ws/src/hsrb_task_manager/script chmod + finial_task.py
- 
-$ roslaunch hsrb_task_manager finial_task.launch
-
-
-rosparam set /move_base/local_planner/goal_tolerance 0.5
-rosparam set /move_base/local_planner/yaw_goal_tolerance 0.1
-rostopic echo /move_base/feedback
-
-
-____________________________________________
-Installation of the tmc ROS Noetic packages.
-
-These are not free packages. Please install them in your remote workstation and do not distribute the instruction set. Open one terminal and run the following comands one by one.
-
-$ sudo sh -c 'echo "deb [arch=amd64] https://hsr-user:jD3k4G2e@packages.hsr.io/ros/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/tmc.list'
-$ sudo sh -c 'echo "deb [arch=amd64] https://hsr-user:jD3k4G2e@packages.hsr.io/tmc/ubuntu `lsb_release -cs` multiverse main" >> /etc/apt/sources.list.d/tmc.list'
-$ sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-$ wget https://hsr-user:jD3k4G2e@packages.hsr.io/tmc.key -O - | sudo apt-key add -
-$ wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc -O - | sudo apt-key add -
-$ wget https://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
-$ sudo sh -c 'mkdir -p /etc/apt/auth.conf.d'
-$ sudo sh -c '/bin/echo -e "machine packages.hsr.io\nlogin hsr-user\npassword jD3k4G2e" >/etc/apt/auth.conf.d/auth.conf'
-$ sudo apt-get update
-$ sudo apt-get install ros-noetic-tmc-desktop-full
-
-
-################### Command and message to publish to the mobile base
-
-# For Tiago
-
-rostopic pub /mobile_base_controller/cmd_vel geometry_msgs/Twist "linear:
- x: 1.0
- y: 0.0
- z: 0.0
-angular:
- x: 0.0
- y: 0.0
- z: 0.0" -r 3
-
-# For the HSRB
-
-rostopic pub /base_velocity geometry_msgs/Twist "linear:
-  x: 0.5
-  y: 0.0
-  z: 0.0
-angular:
-  x: 0.0
-  y: 0.0
-  z: 0.0" -r 3
- 
- 
-################### Command and message to publish to the arm joints.
-
-# For Tiago:
-
-rostopic pub /arm_controller/command trajectory_msgs/JointTrajectory "header:  
+# Control arm movement
+rostopic pub /arm_controller/command trajectory_msgs/JointTrajectory "header:
   seq: 0
-  stamp: 
-    secs: 0
-    nsecs: 0
+  stamp: {secs: 0, nsecs: 0}
   frame_id: ''
 joint_names: ['arm_1_joint', 'arm_2_joint', 'arm_3_joint', 'arm_4_joint', 'arm_5_joint', 'arm_6_joint', 'arm_7_joint']
-points: 
-  - 
-    positions: [0.5, -1.34, -0.2, 1.94, -1.57, 1.37, 0.0]
-    velocities: []
-    accelerations: []
-    effort: []
-    time_from_start: 
-      secs: 1
-      nsecs: 0"
-      
-
-# For HSRB:
-
-$ rostopic pub /hsrb/arm_trajectory_controller/command trajectory_msgs/JointTrajectory "header:
-  seq: 0
-  stamp:
-    secs: 0
-    nsecs: 0
-  frame_id: ''
-joint_names: [arm_flex_joint, arm_lift_joint, arm_roll_joint, wrist_flex_joint, wrist_roll_joint]
 points:
-  - 
-    positions: [0, 0, 0, 0, 0]
-    velocities: []
-    accelerations: []
-    effort: []
-    time_from_start: 
-      secs: 1
-      nsecs: 0"
+- positions: [0.4, -1.17, -1.9, 2.3, -1.3, -0.45, 1.75]
+  velocities: []
+  accelerations: []
+  effort: []
+  time_from_start: {secs: 1, nsecs: 0}"
 
-
-rostopic pub /hsrb/arm_trajectory_controller/command trajectory_msgs/JointTrajectory "header:
-seq: 0
-stamp:
-secs: 0
-nsecs: 0
-frame_id: ''
-joint_names: [arm_flex_joint, arm_lift_joint, arm_roll_joint, wrist_flex_joint, wrist_roll_joint]
-points:
-- positions: [0, 0, 0, 0, 0]
-velocities: []
-accelerations: []
-effort: []
-time_from_start: {secs: 1, nsecs: 0}"
-
-
-      
+# Use with the MoveIt! command to practice grasping
+rosrun robocup_at_home_final_project try_moveit.py
+# Use rosrun to give the point, try to get the point from RViz.

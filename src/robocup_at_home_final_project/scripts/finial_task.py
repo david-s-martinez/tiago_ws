@@ -51,8 +51,8 @@ def response_something(args):
     client.send_goal_and_wait(goal)
 
 def recognize_speech( rate=16000, chunk=1024, record_seconds=5):
-    MODEL_FILE = '/home/jin/ros/tiago_ws/src/a_finial_project_robcup_athome/config/deepspeech-0.9.3-models.pbmm'
-    SCORER_FILE = '/home/jin/ros/tiago_ws/src/a_finial_project_robcup_athome/config/deepspeech-0.9.3-models.scorer'
+    MODEL_FILE = '/home/jin/ros/tiago_ws/src/robocup_at_home_final_project/config/deepspeech-0.9.3-models.pbmm'
+    SCORER_FILE = '/home/jin/ros/tiago_ws/src/robocup_at_home_final_project/config/deepspeech-0.9.3-models.scorer'
 
     recognizer = DeepSpeechRecognizer(MODEL_FILE, SCORER_FILE, rate, chunk, record_seconds)
     try:

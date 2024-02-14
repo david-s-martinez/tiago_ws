@@ -4,8 +4,8 @@ import pyaudio
 import wave
 
 # 模型参数
-MODEL_FILE = '/home/jin/ros/tiago_ws/src/a_finial_project_robcup_athome/config/deepspeech-0.9.3-models.pbmm'
-SCORER_FILE = '/home/jin/ros/tiago_ws/src/a_finial_project_robcup_athome/config/deepspeech-0.9.3-models.scorer'
+MODEL_FILE = '/home/jin/ros/tiago_ws/src/robocup_at_home_final_project/config/deepspeech-0.9.3-models.pbmm'
+SCORER_FILE = '/home/jin/ros/tiago_ws/src/robocup_at_home_final_project/config/deepspeech-0.9.3-models.scorer'
 
 # 音频参数
 FORMAT = pyaudio.paInt16

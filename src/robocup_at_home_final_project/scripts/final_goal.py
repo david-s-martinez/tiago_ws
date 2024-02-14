@@ -13,21 +13,6 @@ class RobotController:
         self.arm_raised = False
         self.current_waypoint = None
 
-    # def goal_callback(self, msg):
-    #     goal_position = msg.goal.target_pose.pose.position
-    #     goal_orientation = msg.goal.target_pose.pose.orientation
-    #     # Format the data as a string or a structured record
-    #     waypoint_data = "Goal - Position (x: {}, y: {}, z: {}), Orientation (x: {}, y: {}, z: {}, w: {})\n".format(
-    #         goal_position.x, goal_position.y, goal_position.z,
-    #         goal_orientation.x, goal_orientation.y, goal_orientation.z, goal_orientation.w)
-    
-    # Assuming you have a function to handle file operations
-        # self.write_to_file("waypoints_record.txt", waypoint_data)
-
-    # def write_to_file(filename, data):
-    #     with open(filename, "a") as file:
-    #         file.write(data)
-
     def arm_status_callback(self, msg):
         self.arm_raised = msg.data
         if self.arm_raised is not None:

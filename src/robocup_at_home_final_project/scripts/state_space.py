@@ -57,13 +57,17 @@ def recognize_speech(rate=16000, chunk=1024, record_seconds=5):
     - rate: The sample rate of the audio recording.
     - chunk: The size of each audio chunk to process.
     - record_seconds: The duration in seconds for which to record audio.
+    
+    Records audio from the microphone and recognizes speech using DeepSpeech.
+    MODEL_FILE = '/path/to/deepspeech/model.pbmm'
+    SCORER_FILE = '/path/to/deepspeech/model.scorer'
 
     Returns:
     - text: The recognized text from the recorded audio.
     """
     # Paths to the DeepSpeech model and scorer files
-    MODEL_FILE = '/home/jin/ros/tiago_ws/src/a_finial_project_robcup_athome/config/deepspeech-0.9.3-models.pbmm'
-    SCORER_FILE = '/home/jin/ros/tiago_ws/src/a_finial_project_robcup_athome/config/deepspeech-0.9.3-models.scorer'
+    MODEL_FILE = '/home/jin/ros/tiago_ws/src/robocup_at_home_final_project/config/deepspeech-0.9.3-models.pbmm'
+    SCORER_FILE = '/home/jin/ros/tiago_ws/src/robocup_at_home_final_project/config/deepspeech-0.9.3-models.scorer'
 
     # Initialize the speech recognizer with the model, scorer, and recording parameters
     recognizer = DeepSpeechRecognizer(MODEL_FILE, SCORER_FILE, rate, chunk, record_seconds)
@@ -76,15 +80,20 @@ def recognize_speech(rate=16000, chunk=1024, record_seconds=5):
         # Ensure the recognizer resources are released
         recognizer.close()
 
-
+# Define a state for initializing the robot
 class InitPosition(smach.State):
+    '''
+    This state is used to initialize the robot to a known position.
+    '''
+    # Define the initialization state
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
         self.InitPosition_arm = [0.2, -1.34, -0.2, 1.94, -1.57, 1.37, 0.0]
         self.InitPosition_head = [0,0]
         self.InitPosition_torso = 0.2
         self.InitPosition_gripper = [0,0]
-
+        
+    # Define the execution of the state
     def InitialPosition(self):
         response_something('Hello, I am here to help you')
         move_head(self.InitPosition_head)
@@ -93,28 +102,33 @@ class InitPosition(smach.State):
         move_torso(self.InitPosition_torso)
         return True
 
+    # Execute the state
     def execute(self, userdata):
         rospy.loginfo('Executing state InitPosition')
-        # Initialization logic here
-
-        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if self.InitialPosition():  # Please replace it with actual conditional judgment logic
+        if self.InitialPosition():
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
         else:
             rospy.loginfo('Robot not succeeded to Init Position')
             return 'aborted'
 
+# Define a state for finding a human
 class Find_Human(smach.State):
+    '''
+    This state is used to find a human in the environment.
+    '''
+    # Define the initialization state
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
         self.find_human_sub = rospy.Subscriber('/goal_centroid', String, self.find_human_callback)
         self.human_goal = None
         self.attempt = 0
-        
+    
+    # Callback function for the human detection
     def find_human_callback(self, msg):
         self.human_goal = msg.data
-        
+    
+    # Logic for finding a human
     def FindHuman(self):
         while self.human_goal is None:
             if self.attempt > 3:
@@ -127,6 +141,7 @@ class Find_Human(smach.State):
                 continue
         return True
     
+    # Execute the state
     def execute(self, userdata):
         rospy.loginfo('Executing state FindHuman')
 
@@ -138,35 +153,43 @@ class Find_Human(smach.State):
             return 'aborted'
         
 class Remind_People_to_come(smach.State):
+    '''
+    This state is used to find a human in the environment.
+    '''
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded'])
 
     def execute(self, userdata):
         rospy.loginfo('Executing state InitPosition')
-        # Initialization logic her
         response_something('i give you five seconds to let me see you  ')
         rospy.sleep(5)
-        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if True:  # Please replace it with actual conditional judgment logic
+        
+        if True:  
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
 
         
 class Remind_People_to_come_2(smach.State):
+    '''
+    This state is used to find a human in the environment.
+    '''
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded'])
 
     def execute(self, userdata):
         rospy.loginfo('Executing state InitPosition')
-        # Initialization logic her
+        
         response_something('i give you five seconds to let me see you  ')
         rospy.sleep(5)
-        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if True:  # Please replace it with actual conditional judgment logic
+        
+        if True:  
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
 
 class Arm_Dection(smach.State):
+    '''
+    This state is used to find which arm is raised by the human.
+    '''
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
         self.arm_dection_sub = rospy.Subscriber('/arm_status', String, self.arm_dection_callback)
@@ -192,13 +215,10 @@ class Arm_Dection(smach.State):
                     self.attempt += 1
                     rospy.sleep(5)
 
-
     def execute(self, userdata):
         rospy.loginfo('Executing state arm_dection')
-        # Initialization logic her
-
-        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if self.arm_dection():  # Please replace it with actual conditional judgment logic
+        
+        if self.arm_dection():  
             rospy.loginfo('Robot succeeded to arm_dection')
             return 'succeeded'
         else:
@@ -206,6 +226,9 @@ class Arm_Dection(smach.State):
             return 'aborted'
 
 class Find_Bag(smach.State):
+    '''
+    This state is used to find a bag in the environment.
+    '''
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
         self.bag_goal = None
@@ -264,13 +287,16 @@ class Find_Bag(smach.State):
             return 'aborted'
         
 class Move_to_Bag(smach.State):
+    '''
+    This state is used to move the robot to the bag.
+    '''
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
 
     def execute(self, userdata):
         rospy.loginfo('Executing state MovetoBag')
         try:
-            subprocess.call(['roslaunch', 'a_finial_project_robcup_athome', 'follow_bag.launch'])
+            subprocess.call(['roslaunch', 'robocup_at_home_final_project', 'follow_bag.launch'])
             rospy.loginfo('Robot succeeded to MovetoBag')
             return 'succeeded'
         except:
@@ -278,15 +304,18 @@ class Move_to_Bag(smach.State):
             return 'aborted'
         
 class Bag_Helper(smach.State):
+    '''
+    This state is used to move the robot to the bag.
+    '''
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
 
     def execute(self, userdata):
         rospy.loginfo('Executing state InitPosition')
-        # Initialization logic her
+        
 
-        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if True:  # Please replace it with actual conditional judgment logic
+        
+        if True:  
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
         else:
@@ -294,6 +323,9 @@ class Bag_Helper(smach.State):
             return 'aborted'
         
 class BagGrasp(smach.State):
+    '''
+    This state is used to grasp the bag.
+    '''
     def __init__(self,):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
         rospy.Subscriber('/move_group/status', String, self.status_callback)
@@ -354,6 +386,9 @@ class BagGrasp(smach.State):
         return result
 
 class BagCollect(smach.State):
+    '''
+    This state is used to grasp the bag.
+    '''
     def __init__(self,):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
         self.look_right = [0.65,-0.98]
@@ -399,6 +434,9 @@ class BagCollect(smach.State):
         return result
 
 class Look_Human(smach.State):
+    '''
+    This state is used to find a human in the environment.
+    '''
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
         self.InitPosition_head = [0,0]
@@ -406,10 +444,10 @@ class Look_Human(smach.State):
     def execute(self, userdata):
         move_head(self.InitPosition_head)
         rospy.loginfo('Executing state InitPosition')
-        # Initialization logic her
+        
 
-        # Check some conditions to decide whether to return 'succeeded' or 'aborted'
-        if True:  # Please replace it with actual conditional judgment logic
+        
+        if True:  
             rospy.loginfo('Robot succeeded to Init Position')
             return 'succeeded'
         else:
@@ -417,6 +455,9 @@ class Look_Human(smach.State):
             return 'aborted'
 
 class Move_to_Human(smach.State):
+    '''
+    This state is used to follow a human in the environment.
+    '''
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
 
@@ -424,7 +465,7 @@ class Move_to_Human(smach.State):
         rospy.loginfo('Executing state Move to Human')
         try:
             response_something("I am now ready to follow you with your bag. Start moving away from me and I will follow. When you are at your destination, I would ask you to raise your hand to tell me to stop.")
-            subprocess.call(['roslaunch', 'a_finial_project_robcup_athome', 'follow_human.launch'])
+            subprocess.call(['roslaunch', 'robocup_at_home_final_project', 'follow_human.launch'])
             rospy.loginfo('Robot succeeded to Move to Human')
             return 'succeeded'
         except:
@@ -432,6 +473,9 @@ class Move_to_Human(smach.State):
             return 'aborted'
     
 class PutDown(smach.State):
+    '''
+    This state is used to put down the bag.
+    '''
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded'])
         self.end_position = [0.4, -1.17, -1.9, 2.3, -1.3, -0.45, 1.75]
@@ -446,6 +490,9 @@ class PutDown(smach.State):
         return 'succeeded'
     
 class ReturntoHome(smach.State):
+    '''
+    This state is used to return to the initial position.
+    '''
     def __init__(self):
         smach.State.__init__(self, outcomes=['succeeded', 'aborted'])
 
@@ -453,7 +500,7 @@ class ReturntoHome(smach.State):
         rospy.loginfo('Executing state ReturntoHome')
         
         if ReturntoHome(): 
-            subprocess.call(['rosrun', 'a_finial_project_robcup_athome', 'return_home.py'])
+            subprocess.call(['rosrun', 'robocup_at_home_final_project', 'return_home.py'])
             rospy.loginfo('Robot succeeded to ReturntoHome')
             return 'succeeded'
         else:
@@ -475,36 +522,30 @@ def main():
         smach.StateMachine.add('INIT_POSITION', InitPosition(), 
                                transitions={'succeeded':'Find_Human',
                                             'aborted':'aborted'})
-        # smach.StateMachine.add('Find_Human', Find_Human(), 
-        #                        transitions={'succeeded':'Arm_Dection',
-        #                                     'aborted':'Remind_People_to_come'})
         smach.StateMachine.add('Find_Human', Find_Human(), 
-                               transitions={'succeeded':'Look_Human',
+                               transitions={'succeeded':'Arm_Dection',
                                             'aborted':'Remind_People_to_come'})
         smach.StateMachine.add('Remind_People_to_come', Remind_People_to_come(), 
                                transitions={'succeeded':'Find_Human'})
+        smach.StateMachine.add('Arm_Dection', Arm_Dection(), 
+                               transitions={'succeeded':'Find_Bag',
+                                            'aborted':'Find_Human'})
+        smach.StateMachine.add('Find_Bag', Find_Bag(), 
+                               transitions={'succeeded':'Move_to_Bag',
+                                            'aborted':'aborted'})
+        smach.StateMachine.add('Move_to_Bag', Move_to_Bag(), 
+                               transitions={'succeeded':'BagGrasp',
+                                            'aborted':'Bag_Helper'})
+        smach.StateMachine.add('Bag_Helper', Bag_Helper(), 
+                               transitions={'succeeded':'Find_Bag',
+                                            'aborted':'aborted'})       
+        smach.StateMachine.add('BagGrasp', BagGrasp(), 
+                               transitions={'succeeded':'BagCollect',
+                                            'aborted':'aborted'})
         
-        # smach.StateMachine.add('Arm_Dection', Arm_Dection(), 
-        #                        transitions={'succeeded':'Find_Bag',
-        #                                     'aborted':'Find_Human'})
-        # smach.StateMachine.add('Find_Bag', Find_Bag(), 
-        #                        transitions={'succeeded':'Move_to_Bag',
-        #                                     'aborted':'aborted'})
-        # smach.StateMachine.add('Move_to_Bag', Move_to_Bag(), 
-        #                        transitions={'succeeded':'BagGrasp',
-        #                                     'aborted':'Bag_Helper'})
-        # smach.StateMachine.add('Bag_Helper', Bag_Helper(), 
-        #                        transitions={'succeeded':'Find_Bag',
-        #                                     'aborted':'aborted'})       
-        # smach.StateMachine.add('BagGrasp', BagGrasp(), 
-        #                        transitions={'succeeded':'BagCollect',
-        #                                     'aborted':'aborted'})
-        
-        # smach.StateMachine.add('BagCollect', BagCollect(), 
-        #                        transitions={'succeeded':'Look_Human',
-        #                                     'aborted':'aborted'})
-
-
+        smach.StateMachine.add('BagCollect', BagCollect(), 
+                               transitions={'succeeded':'Look_Human',
+                                            'aborted':'aborted'})
         
         smach.StateMachine.add('Look_Human', Look_Human(), 
                                transitions={'succeeded':'Move_to_Human',
@@ -527,7 +568,6 @@ def main():
 
     rospy.spin()
     sis.stop()
-
 
 if __name__ == '__main__':
     main()

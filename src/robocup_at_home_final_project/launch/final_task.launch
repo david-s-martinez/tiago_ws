@@ -1,0 +1,9 @@
+<launch>
+
+  <!-- Set the param that trajectory_execution_manager needs to find the controller plugin -->
+  <node name="robocup_at_home_final_project_node" type="state_space.py" pkg="robocup_at_home_final_project" output="screen" />
+
+  <!-- The rest of the params are specific to this plugin -->
+  <rosparam file="$(find robocup_at_home_final_project)/config/way_points.yaml"/>
+
+</launch>

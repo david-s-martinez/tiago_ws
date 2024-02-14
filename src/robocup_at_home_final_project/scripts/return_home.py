@@ -1,10 +1,20 @@
 #!/usr/bin/env python
+
 import rospy
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from geometry_msgs.msg import Pose, Point, Quaternion
 
 def read_waypoints(file_path):
+    """
+    Read waypoints from a file.
+
+    Args:
+        file_path (str): The path to the file containing the waypoints.
+
+    Returns:
+        list: A list of tuples, where each tuple contains the position and orientation of a waypoint.
+    """
     waypoints = []
     with open(file_path, 'r') as file:
         for line in file:
@@ -16,6 +26,16 @@ def read_waypoints(file_path):
     return waypoints
 
 def create_move_base_goal(position, orientation):
+    """
+    Create a MoveBaseGoal object.
+
+    Args:
+        position (Point): The position of the goal.
+        orientation (Quaternion): The orientation of the goal.
+
+    Returns:
+        MoveBaseGoal: The MoveBaseGoal object.
+    """
     goal = MoveBaseGoal()
     goal.target_pose.header.frame_id = "map"
     goal.target_pose.header.stamp = rospy.Time.now()
@@ -24,6 +44,12 @@ def create_move_base_goal(position, orientation):
     return goal
 
 def navigate_waypoints(waypoints):
+    """
+    Navigate through a list of waypoints.
+
+    Args:
+        waypoints (list): A list of tuples, where each tuple contains the position and orientation of a waypoint.
+    """
     client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
     client.wait_for_server()
 

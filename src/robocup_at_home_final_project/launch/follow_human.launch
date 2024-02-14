@@ -1,0 +1,6 @@
+<launch>
+
+  <!-- Set the param that trajectory_execution_manager needs to find the controller plugin -->
+  <node name="tiago_human_follow" type="tiago_human_follow.py" pkg="robocup_at_home_final_project" output="screen" />
+
+</launch>
