@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+  <node name="object_labeling_node" pkg="object_labeling" type="object_labeling_node" output="screen"/>
+  <rosparam file="$(find object_labeling)/launch/config/config.yaml" />
+
+</launch>

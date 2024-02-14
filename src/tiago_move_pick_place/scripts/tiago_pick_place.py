@@ -38,7 +38,12 @@ class Controller:
         goal_msg.target_pose.header.stamp = rospy.Time.now()
         goal_msg.target_pose.pose.position.x = goal[0]
         goal_msg.target_pose.pose.position.y = goal[1]
-        goal_msg.target_pose.pose.orientation.w = goal[2]
+        goal_msg.target_pose.pose.position.z = goal[2]
+        quaternion = tf.transformations.quaternion_from_euler(goal[3], goal[4], goal[5])
+        goal_msg.target_pose.pose.orientation.x = quaternion[0]
+        goal_msg.target_pose.pose.orientation.y = quaternion[1]
+        goal_msg.target_pose.pose.orientation.z = quaternion[2]
+        goal_msg.target_pose.pose.orientation.w = quaternion[3]
         return goal_msg
 
     # Exercise 4: Move the robot's arm
@@ -125,6 +130,22 @@ def main():
                 controller.move_arm(controller.target_pose_1)
                 sleep(1.0)
                 rospy.loginfo("Executing move_arm to post lift")
+                controller.move_arm(controller.target_pose)
+
+            if goal_index == 6:
+                rospy.loginfo("Executing move_arm to pre place")
+                controller.move_arm(controller.target_pose)
+                sleep(1.0)
+                controller.move_arm(controller.target_pose_1)
+                sleep(1.0)
+                controller.move_arm(controller.target_pose)
+                sleep(1.0)
+
+            if goal_index == 7:
+                rospy.loginfo("Executing move_arm to place")
+                controller.move_arm(controller.target_pose_1)
+                sleep(1.0)
+                rospy.loginfo("Executing move_arm to post place")
                 controller.move_arm(controller.target_pose)
 
         else:

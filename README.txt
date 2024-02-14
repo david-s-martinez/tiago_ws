@@ -1,4 +1,5 @@
 Tiago Installation:
+
 https://wiki.ros.org/Robots/TIAGo/Tutorials/Installation/InstallUbuntuAndROS
 rosinstall ./src /opt/ros/noetic tiago_public−noetic.rosinstall
 
@@ -64,14 +65,94 @@ Tutorial 5
 
 1: Navigation
 First move the src/object_detection_world/worlds/pick_place.world file to pal_gazebo_worlds/worlds
-roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
+
+$ roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
 *Change map path according to your system, all maps are found under the ./maps/ directory in this repo.
+
+$ rosservice call /global_localization "{}"
+
+$ roslaunch tiago_localization tiago_localization.launch
+
 2: Perception
 
 3: Robot manipulation
-roslaunch tiago_move_pick_place tiago_move.launch
+$ roslaunch tiago_move_pick_place tiago_move.launch
 
-4: State machine
+if you want to use state machine you should start over
+4: State 
+
+$ roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
+
+$ sudo apt-get install ros-noetic-smach-viewer
+
+$ rosrun smach_viewer smach_viewer.py
+
+$ roslaunch hsrb_task_manager task_manager.launch
+
+Finial task
+# Tiago is using UTC, so changing the time zone on your PC to UTC zone is better.
+
+$ sudo timedatectl set-timezone UTC
+
+ssh pal@192.168.1.200
+
+source /opt/ros/noetic/setup.bash
+
+export ROS_IP=192.168.1.105
+export ROS_MASTER_URI=http://192.168.1.200:11311
+
+ping 192.168.1.200
+on web: 192.168.1.200
+http://tiago-46c:8080/?&wtd=VtoPWd6ULoaYaohm
+
+killall gzserver
+killall gzclient
+rqt_graph
+
+rosrun key_teleop key_teleop.py
+
+demo
+roslaunch tiago_gazebo tiago_gazebo.launch public_sim:=true end_effector:=pal-gripper
+
+roslaunch object_detection_world tiago.launch world_suffix:=empty
+
+rosrun rqt_joint_trajectory_controller rqt_joint_trajectory_controller
+use GUI to look objects :(controller--->head_controller head_1_joint:0 head_2_joint:-0.8)
+
+
+1: Navigation
+First move the src/object_detection_world/worlds/pick_place.world file to pal_gazebo_worlds/worlds
+
+$ roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
+*Change map path according to your system, all maps are found under the ./maps/ directory in this repo.
+
+$ rosservice call /global_localization "{}"
+
+$ roslaunch tiago_localization tiago_localization.launch
+
+2: Perception
+
+3: Robot manipulation
+$ roslaunch tiago_move_pick_place tiago_move.launch
+
+if you want to use state machine you should start over
+4: State 
+
+$ roslaunch tiago_2dnav_gazebo tiago_navigation.launch public_sim:=true world:=pick_place map:=$HOME/.pal/tiago_maps/configurations/pick_place_map
+
+$ sudo apt-get install ros-noetic-smach-viewer
+
+$ rosrun smach_viewer smach_viewer.py
+
+ /tiago_ws/src/hsrb_task_manager/script chmod + finial_task.py
+ 
+$ roslaunch hsrb_task_manager finial_task.launch
+
+
+rosparam set /move_base/local_planner/goal_tolerance 0.5
+rosparam set /move_base/local_planner/yaw_goal_tolerance 0.1
+rostopic echo /move_base/feedback
+
 
 ____________________________________________
 Installation of the tmc ROS Noetic packages.
